@@ -1,0 +1,22 @@
+body {
+    height: 100%;
+    background-color: #FAFBFC;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    user-select: none;
+}
+
+*::-webkit-scrollbar {
+    display: none;
+}
+
+
+hr {
+    color: #DADBE1;
+    height: 1.5px;
+
+}
+
+option {
+ display: inline-block;
+}
+
