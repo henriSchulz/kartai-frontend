@@ -5,7 +5,7 @@ import {teal} from "@mui/material/colors";
 
 
 export const listViewWidth = {md: 800, sm: 700, xs: 390}
-export const listViewHeight = {md: 550, sm: 450, xs: 400}
+export const listViewHeight = {md: 550, sm: 450, xs: window.innerHeight-100}
 
 export const listView: SxProps<Theme> = {
     borderRadius: "8px",
@@ -33,7 +33,8 @@ export const listViewContentFullHeight: SxProps<Theme> = {
 export const listViewContent: SxProps<Theme> = {
     overflowY: "scroll",
     overflowX: "hidden",
-    height: {md: 400, xs: 360}
+    height: {md: 400, xs: window.innerHeight-200},
+    pt: 2
 }
 
 export function row(selected: boolean): SxProps<Theme> {
@@ -54,5 +55,9 @@ export function row(selected: boolean): SxProps<Theme> {
         transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1), cubic-bezier(0.4, 0, 0.2, 1)",
         transitionDelay: "0ms, 0ms",
         transitionProperty: "border, box-shadow",
+        "&:hover": {
+            border: "1px solid #21658F",
+            backgroundImage: "none"
+        }
     }
 }

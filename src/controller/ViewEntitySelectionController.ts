@@ -4,7 +4,7 @@ import BaseModel from "../types/dbmodel/BaseModel";
 import ViewEntitySelectionControllerOptions from "../types/ViewEntitySelectionControllerOptions";
 
 
-export default abstract class ViewEntitySelectionController<T extends BaseModel> {
+export default abstract class<T extends BaseModel> {
 
     private readonly state: ViewEntitySelectionControllerOptions<T>["states"]
 
@@ -16,9 +16,11 @@ export default abstract class ViewEntitySelectionController<T extends BaseModel>
     }
 
 
-    public onToggleSelectDeckOrDirectory(options: ToggleSelectViewEntityOptions<T>) {
+    public onToggleSelectViewEntity(options: ToggleSelectViewEntityOptions<T>) {
         const selectedEntities = this.state.selectedEntitiesState.val
         if (selectedEntities.some(e => e.id === options.viewItem.id)) {
+
+
             this.state.selectedEntitiesState.set(selectedEntities.filter(e => e.id !== options.viewItem.id))
             if (options.setAsAnchorEl) {
                 this.state.selectedEntitiesAnchorElState.set(null)
@@ -88,29 +90,37 @@ export default abstract class ViewEntitySelectionController<T extends BaseModel>
             const anchorIndex = this.getAnchorIndex(viewItems)
             if (up) {
                 const maxIndexInSelection = this.getMaxIndexInSelection(viewItems)
+                console.log({maxIndexInSelection, anchorIndex})
                 if (maxIndexInSelection > anchorIndex) {
-                    this.onToggleSelectDeckOrDirectory({
+                    this.scrollToViewEntity(viewItems[maxIndexInSelection])
+                    this.onToggleSelectViewEntity({
                         viewItem: viewItems[maxIndexInSelection],
+                        setAsAnchorEl: false
                     })
                 } else {
+                    // maxIndexInSelection <= anchorIndex
                     if (anchorIndex === 0) return
                     const minSelectionIndex = this.getMinIndexInSelection(viewItems)
                     if (minSelectionIndex === 0) return
-                    this.onToggleSelectDeckOrDirectory({
+
+                    this.scrollToViewEntity(viewItems[minSelectionIndex - 1])
+                    this.onToggleSelectViewEntity({
                         viewItem: viewItems[minSelectionIndex - 1],
                     })
                 }
             } else {
                 const minIndexInSelection = this.getMinIndexInSelection(viewItems)
                 if (minIndexInSelection < anchorIndex) {
-                    this.onToggleSelectDeckOrDirectory({
+                    this.scrollToViewEntity(viewItems[minIndexInSelection])
+                    this.onToggleSelectViewEntity({
                         viewItem: viewItems[minIndexInSelection],
                     })
                 } else {
                     if (anchorIndex === viewItems.length - 1) return
                     const maxSelectionIndex = this.getMaxIndexInSelection(viewItems)
                     if (maxSelectionIndex === viewItems.length - 1) return
-                    this.onToggleSelectDeckOrDirectory({
+                    this.scrollToViewEntity(viewItems[maxSelectionIndex + 1])
+                    this.onToggleSelectViewEntity({
                         viewItem: viewItems[maxSelectionIndex + 1],
                     })
                 }
@@ -119,22 +129,28 @@ export default abstract class ViewEntitySelectionController<T extends BaseModel>
             const anchorIndex = this.getAnchorIndex(viewItems)
             if (up) {
                 if (anchorIndex === 0) return
-                this.onToggleSelectDeckOrDirectory({
+                this.scrollToViewEntity(viewItems[anchorIndex - 1])
+                this.onToggleSelectViewEntity({
                     viewItem: viewItems[anchorIndex - 1],
                     singleSelect: true,
                     setAsAnchorEl: true
                 })
             } else {
                 if (anchorIndex === viewItems.length - 1) return
-                this.onToggleSelectDeckOrDirectory({
+                this.scrollToViewEntity(viewItems[anchorIndex + 1])
+                this.onToggleSelectViewEntity({
                     viewItem: viewItems[anchorIndex + 1],
                     singleSelect: true,
                     setAsAnchorEl: true
                 })
             }
         }
+    }
 
 
+    private scrollToViewEntity = (entity: T) => {
+        const el = document.getElementById("row-" + entity.id)
+        el?.scrollIntoView()
     }
 
 }

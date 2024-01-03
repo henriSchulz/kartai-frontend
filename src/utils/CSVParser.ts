@@ -6,7 +6,6 @@ export interface CSVParseResult {
 
 
 export class CSVParser {
-    //before splitting the row, 'Tab' is replaced with \t
 
     public static readonly COMMON_DELIMITERS = ["\t", ",", ";", "|"]
 

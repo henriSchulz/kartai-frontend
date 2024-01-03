@@ -16,8 +16,6 @@ interface ImportCSVModalProps {
 
 
 export default function ({controller}: ImportCSVModalProps) {
-
-
     const steps = [StaticText.READ_CSV, StaticText.ASSIGN_FIELDS];
 
     const activeStep = controller.states.activeCsvImportStepState.val
@@ -40,33 +38,27 @@ export default function ({controller}: ImportCSVModalProps) {
         })
     }, [controller.states.showState.val])
 
-    const selectedCardType = useMemo(() => {
+
+    const data = useMemo(() => {
         try {
-            return CardTypeUtils.getInstance().getById(controller.states.selectedCardTypeIdState.val)
+            const selectedCardType = CardTypeUtils.getInstance().getById(controller.states.selectedCardTypeIdState.val)
+            const cardTypeFields = FieldUtils.getInstance().getAllBy("cardTypeId", selectedCardType.id)
+            const fieldOptions = cardTypeFields.map(field => ({label: field.name, value: field.id}))
+
+            if (cardTypeFields.length < controller.states.parsedCsvState.val[0].length) {
+                fieldOptions.push({label: `[${StaticText.EMPTY}]`, value: "EMPTY"})
+            }
+            return {
+                selectedCardType,
+                fieldOptions,
+                cardTypeFields
+            }
+
         } catch (e) {
             return null
         }
-    }, [controller.states.selectedCardTypeIdState.val])
+    }, [controller.states.selectedCardTypeIdState.val, controller.states.showState.val])
 
-    const cardTypeFields = useMemo(() => {
-
-        if (!selectedCardType) return []
-        return FieldUtils.getInstance().getAllBy("cardTypeId", selectedCardType.id)
-    }, [controller.states.selectedCardTypeIdState.val])
-
-    const fieldOptions = useMemo(() => {
-        if (!controller.states.parsedCsvState.val) return []
-        if (controller.states.parsedCsvState.val.length === 0) return []
-
-
-        const options = cardTypeFields.map(field => ({label: field.name, value: field.id}))
-
-        if (cardTypeFields.length < controller.states.parsedCsvState.val[0].length) {
-            options.push({label: `[${StaticText.EMPTY}]`, value: "EMPTY"})
-        }
-
-        return options
-    }, [controller.states.selectedCardTypeIdState.val])
 
     const csvDelimiterOptions = [
         {value: "\t", label: "tab"},
@@ -127,7 +119,7 @@ export default function ({controller}: ImportCSVModalProps) {
 
                     <KartAIBox mt={2} flexSpaceBetween>
                         <Typography variant="h6">{StaticText.CSV_FIELDS}</Typography>
-                        <Typography variant="h6">{selectedCardType?.name}</Typography>
+                        <Typography variant="h6">{data?.selectedCardType?.name}</Typography>
                     </KartAIBox>
 
 
@@ -165,7 +157,7 @@ export default function ({controller}: ImportCSVModalProps) {
                                                           return clonedState
                                                       })
                                                   }}
-                                                  options={fieldOptions}
+                                                  options={data?.fieldOptions ?? []}
                                     />
                                 </KartAIBox>
                             </KartAIBox>
@@ -189,11 +181,12 @@ export default function ({controller}: ImportCSVModalProps) {
                     />
 
 
-                    <Button sx={{mt: 2, alignSelf: "right"}} onClick={() => {
-                        controller.onParseCsv()
-                        controller.states.activeCsvImportStepState.set(prev => prev + 1)
-                    }}
-                            fullWidth variant="outlined">{StaticText.CONTINUE}</Button>
+                    <Button sx={{mt: 2, alignSelf: "right"}}
+                            onClick={controller.onParseCsv}
+                            fullWidth
+                            variant="outlined">
+                        {StaticText.CONTINUE}
+                    </Button>
                 </KartAIBox>
             }
 

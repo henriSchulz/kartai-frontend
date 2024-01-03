@@ -1,6 +1,13 @@
 import {SxProps} from "@mui/system";
 import {Theme} from "@mui/material";
-import {learnCardsCountColor, loadingGray, newCardsCountColor, reviewCardsCountColor} from "../../../styles/root";
+import {
+    learnCardsCountColor,
+    loadingGray,
+    newCardsCountColor,
+    pausedColor,
+    reviewCardsCountColor
+} from "../../../styles/root";
+import {row} from "../../../styles/listView";
 
 
 export const deckOverviewItemTitle: SxProps<Theme> = {
@@ -16,7 +23,7 @@ export const deckOverviewItemTitleButton: SxProps<Theme> = {
     py: 1,
     fontSize: 30,
     pl: 2,
-    pr: 7
+    pr: 3,
 }
 
 export function deckOverviewCardsCount(cardLevel: "new" | "learning" | "review", noCards: boolean): SxProps<Theme> {
@@ -50,3 +57,5 @@ export function deckOverviewCardsCount(cardLevel: "new" | "learning" | "review",
             }
     }
 }
+
+

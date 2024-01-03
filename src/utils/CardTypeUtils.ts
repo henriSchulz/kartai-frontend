@@ -7,6 +7,7 @@ import CardTypeVariant from "../types/dbmodel/CardTypeVariant";
 import Field from "../types/dbmodel/Field";
 import CardTypeVariantUtils from "./CardTypeVariantUtils";
 import FieldUtils from "./FieldUtils";
+import EntityUtilsFuncOptions from "../types/EntityUtilsFuncOptions";
 
 export default class CardTypeUtils extends EntityUtils<CardType> {
     constructor() {
@@ -29,12 +30,22 @@ export default class CardTypeUtils extends EntityUtils<CardType> {
         return this.instance
     }
 
-    public async addCardTypesAndVariantsAndFields(cardTypes: CardType[], cardTypeVariants: CardTypeVariant[], fields: Field[]): Promise<void> {
-        await this.add(cardTypes)
+    public async addCardTypesAndVariantsAndFields(cardTypes: CardType[], cardTypeVariants: CardTypeVariant[], fields: Field[], options: EntityUtilsFuncOptions = {
+        local: true,
+        api: true
+    }): Promise<void> {
+        await this.add(cardTypes, options)
 
-        await CardTypeVariantUtils.getInstance().add(cardTypeVariants)
+        await CardTypeVariantUtils.getInstance().add(cardTypeVariants, options)
 
-        await FieldUtils.getInstance().add(fields)
+        await FieldUtils.getInstance().add(fields, options)
+    }
+
+    public hasDefaultCardType(prefix: string): boolean {
+        for (const entity of Array.from(this.entities.values())) {
+            if (entity.id.startsWith(prefix)) return true
+        }
+        return false
     }
 
 }

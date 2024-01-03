@@ -1,5 +1,8 @@
 import {Button, CircularProgress, SxProps, Theme, Typography,} from "@mui/material";
 import React from "react";
+import KartAIBox from "./KartAIBox";
+import {isXsWindow} from "../../utils/general";
+import {StaticText} from "../../data/text/staticText";
 
 interface KartAIButtonProps {
     variant: "contained" | "outlined" | "text"
@@ -20,6 +23,7 @@ interface KartAIButtonProps {
     mb?: number
     ml?: number
     mr?: number
+    hideIfXs?: boolean
 }
 
 
@@ -27,6 +31,10 @@ const KartAIButton = React.forwardRef((props: KartAIButtonProps, ref: React.Ref<
 
     const getSx = () => {
         let sx: SxProps<Theme> = {...props.sx}
+
+        if (props.fullWidth) {
+            sx = {...sx, width: "100%"}
+        }
 
         if (props.mt) {
             sx = {...sx, mt: props.mt}
@@ -41,7 +49,12 @@ const KartAIButton = React.forwardRef((props: KartAIButtonProps, ref: React.Ref<
             sx = {...sx, mr: props.mr}
         }
 
+
         return sx
+    }
+
+    if (props.hideIfXs && isXsWindow()) {
+        return <></>
     }
 
 
@@ -49,10 +62,10 @@ const KartAIButton = React.forwardRef((props: KartAIButtonProps, ref: React.Ref<
                    color={props.color}
                    disabled={props.disabled || props.loading}
                    fullWidth={props.fullWidth} variant={props.variant}>
-        {props.loading ? <>
-            <Typography>{props.loadingText}</Typography>
-            <CircularProgress size="sm"/>
-        </> : props.children}
+        {props.loading ? <KartAIBox spacing={1} flexCenter>
+            <Typography>{props.loadingText ?? StaticText.LOADING}</Typography>
+            <CircularProgress size="1.5rem"/>
+        </KartAIBox> : props.children}
     </Button>
 })
 

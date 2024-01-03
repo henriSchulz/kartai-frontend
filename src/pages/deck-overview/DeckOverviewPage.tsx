@@ -6,7 +6,7 @@ import {useAppDispatch, useAppSelector} from "../../hooks/reduxUtils";
 import KartAIBox from "../../components/ui/KartAIBox";
 import ListView from "../../components/list-view/ListView";
 import ListViewHead from "../../components/list-view/ListViewHead";
-import {Add, CloudUpload, Folder, FolderOutlined, Notes, School, TableRowsOutlined} from "@mui/icons-material";
+import {Add, CloudUpload, Folder, FolderOutlined, Image, Notes, School, TableRowsOutlined} from "@mui/icons-material";
 import {StaticText} from "../../data/text/staticText";
 import {ClickAwayListener, Divider} from "@mui/material";
 import {lightBorderColor} from "../../styles/root";
@@ -14,7 +14,7 @@ import KartAIContainer from "../../components/ui/KartAIContainer";
 import PageTransitionWrapper from "../../components/animation/PageTransitionWrapper";
 import ListViewContent from "../../components/list-view/ListViewContent";
 import DeckOverviewController from "./DeckOverviewController";
-import Context from "../../types/Context";
+
 import DeckOverviewItem from "./components/DeckOverviewItem";
 import ContextMenu from "../../types/ContextMenu";
 import NewDeckOrDirectoryController from "./features/new-deck-or-directory/NewDeckOrDirectoryController";
@@ -35,12 +35,17 @@ import MoveDeckOrDirectoryController from "./features/move-deck-or-directory/Mov
 import MoveDeckOrDirectoryModal from "./features/move-deck-or-directory/MoveDeckOrDirectoryModal";
 import DirectoryUtils from "../../utils/DirectoryUtils";
 import KartAIButton from "../../components/ui/KartAIButton";
-import KartAIItemMenu, {ItemMenuItem} from "../../components/KartAIItemMenu";
+import {ItemMenuItem} from "../../components/KartAIItemMenu";
 import KartAIPopperMenu from "../../components/KartAIPopperMenu";
 import InvisibleFileSelector from "../../components/InvisibleFileSelector";
 import {useNavigate, useParams} from "react-router-dom";
 import ImportCSVController from "./features/import-csv/ImportCSVController";
 import ImportCSVModal from "./features/import-csv/ImportCSVModal";
+import {isXsWindow} from "../../utils/general";
+import TopProgressbar from "../../components/TopProgressbar";
+import ImportCraftTableController from "./features/import-craft-table/ImportCraftTableController";
+import ImportCraftTableModal from "./features/import-craft-table/ImportCraftTableModal";
+import {Icons} from "../../asserts/asserts";
 
 
 export default function () {
@@ -49,10 +54,11 @@ export default function () {
 
     const navigate = useNavigate()
 
-    const {snackbar, topLevelInitDone, loadingBackdrop} = useGlobalContext()
+    const {snackbar, topLevelInitDone, loadingBackdrop, cardTypesController} = useGlobalContext()
 
     const [initDone, setInitDone] = React.useState(false)
     const [loading, setLoading] = React.useState(false)
+    const [uploadDuration, setUploadDuration] = React.useState(0)
     const [currentDirectory, setCurrentDirectory] = React.useState<Directory | null>(null)
     const [tempSelectedDeckOrDirectory, setTempSelectedDeckOrDirectory] = React.useState<DeckOrDirectory | null>(null)
     const [selectedDecksOrDirectories, setSelectedDecksOrDirectories] = React.useState<DeckOrDirectory[]>([])
@@ -67,6 +73,12 @@ export default function () {
     const [showShareDeckOrDirectoryModal, setShowShareDeckOrDirectoryModal] = React.useState(false)
     const [showMoveDeckOrDirectoryModal, setShowMoveDeckOrDirectoryModal] = React.useState(false)
     const [showImportCsvModal, setShowImportCsvModal] = React.useState(false)
+    const [showImportCraftTableModal, setShowImportCraftTableModal] = React.useState(false)
+
+    const isModalOpen = showNewDeckOrDirectoryModal || showRenameDeckOrDirectoryModal || showDeleteDeckOrDirectoryModal
+        || showDeckOrDirectoryInformationModal || showExportDeckOrDirectoryModal || showShareDeckOrDirectoryModal
+        || showMoveDeckOrDirectoryModal || showImportCsvModal || showImportCraftTableModal
+        || cardTypesController.states.showState.val
 
     const [selectedExportFormat, setSelectedExportFormat] = React.useState<"csv" | "kpkg">("kpkg")
     const [csvDelimiter, setCsvDelimiter] = React.useState("\t")
@@ -74,6 +86,7 @@ export default function () {
     const [csvFileText, setCsvFileText] = useState("")
     const [activeCsvImportStep, setActiveCsvImportStep] = useState(0)
     const [parsedCsvData, setParsedCsvData] = useState<string[][]>([])
+    const [parsedCraftTableData, setParsedCraftTableData] = useState<string[][]>([])
     const [fieldsChoice, setFieldsChoice] = useState<Record<number, string>>({})
     const [selectedDestinationDeckId, setSelectedDestinationDeckId] = useState<string>("")
     const [selectedCardTypeId, setSelectedCardTypeId] = useState<string>("")
@@ -196,6 +209,21 @@ export default function () {
             selectedCardTypeIdState: {val: selectedCardTypeId, set: setSelectedCardTypeId},
             selectedDestinationDeckIdState: {val: selectedDestinationDeckId, set: setSelectedDestinationDeckId},
             csvDelimiterState: {val: csvDelimiter, set: setCsvDelimiter},
+            loadingState: {val: loading, set: setLoading},
+            uploadDurationState: {val: uploadDuration, set: setUploadDuration},
+        },
+        loadingBackdrop,
+    })
+
+    const importCraftTableController = new ImportCraftTableController({
+        snackbar, loadingBackdrop, deckOverviewController: controller, newDeckOrDirectoryController, states: {
+            showState: {val: showImportCraftTableModal, set: setShowImportCraftTableModal},
+            selectedDestinationDeckIdState: {val: selectedDestinationDeckId, set: setSelectedDestinationDeckId},
+            loadingState: {val: loading, set: setLoading},
+            selectedCardTypeIdState: {val: selectedCardTypeId, set: setSelectedCardTypeId},
+            fieldsChoiceState: {val: fieldsChoice, set: setFieldsChoice},
+            parsedCraftTableState: {val: parsedCraftTableData, set: setParsedCraftTableData},
+            activeCsvImportStepState: {val: activeCsvImportStep, set: setActiveCsvImportStep},
         }
     })
 
@@ -233,26 +261,44 @@ export default function () {
 
 
     React.useEffect(() => {
-        const handler = (event: KeyboardEvent) => {
-            if (event.key === "Escape") {
-                controller.onCloseContextMenu()
-                event.preventDefault()
-            }
+            const handler = (event: KeyboardEvent) => {
+                if (isModalOpen) return
 
-            if (event.key === "ArrowUp" || event.key === "ArrowDown") {
-                controller.onArrowKeySelection({
-                    up: event.key === "ArrowUp",
-                    shiftKey: event.shiftKey,
-                    viewItems: deckOverviewItems,
-                })
+                if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+                    controller.onArrowKeySelection({
+                        up: event.key === "ArrowUp",
+                        shiftKey: event.shiftKey,
+                        viewItems: deckOverviewItems,
+                    })
+
+                }
+            }
+            window.addEventListener("keydown", handler)
+
+            return () => window.removeEventListener("keydown", handler)
+        }, [selectedDecksOrDirectoriesAnchorEl, selectedDecksOrDirectories, deckOverviewItems, isModalOpen]
+    )
+
+
+    React.useEffect(() => {
+        const keyboardShortcuts = {
+            "Backspace": () => {
+                if (selectedDecksOrDirectories.length > 0) {
+                    deleteDeckOrDirectoryController.open(selectedDecksOrDirectories[0])
+                }
+            },
+            "a": () => {
+                setSelectedDecksOrDirectories(deckOverviewItems)
             }
         }
+
+        const handler = controller.getOnKeyboardShortcut(keyboardShortcuts, isModalOpen)
 
         window.addEventListener("keydown", handler)
 
         return () => window.removeEventListener("keydown", handler)
 
-    }, [selectedDecksOrDirectoriesAnchorEl, selectedDecksOrDirectories, deckOverviewItems])
+    }, [selectedDecksOrDirectories, deckOverviewItems, isModalOpen])
 
 
     const newDeckActionButton = {
@@ -264,6 +310,7 @@ export default function () {
 
     const learnFolderActionButton = {
         text: StaticText.LEARN_FOLDER, onClick: () => {
+            navigate(`/study/${currentDirectory?.id}`)
         },
         icon: <School/>
     }
@@ -295,75 +342,89 @@ export default function () {
             onClick() {
                 controller.onOpenCsvFileSelector()
             }
+        }, {
+            text: StaticText.CRAFT_TABLE,
+            icon: <img height="23" width="23" src={Icons.CRAFT}/>,
+            onClick() {
+                importCraftTableController.open()
+            }
         }
     ]
 
 
     return <KartAIBox>
 
-
         {showNewDeckOrDirectoryModal && <NewDeckOrDirectoryModal controller={newDeckOrDirectoryController}/>}
-        {showRenameDeckOrDirectoryModal && <RenameDeckOrDirectoryModal controller={renameDeckOrDirectoryController}/>}
-        {showDeleteDeckOrDirectoryModal && <DeleteDeckOrDirectoryModal controller={deleteDeckOrDirectoryController}/>}
+        {showRenameDeckOrDirectoryModal &&
+            <RenameDeckOrDirectoryModal controller={renameDeckOrDirectoryController}/>}
+        {showDeleteDeckOrDirectoryModal &&
+            <DeleteDeckOrDirectoryModal controller={deleteDeckOrDirectoryController}/>}
         {showDeckOrDirectoryInformationModal &&
             <DeckOrDirectoryInformationModal controller={deckOrDirectoryInformationController}/>}
-        {showExportDeckOrDirectoryModal && <ExportDeckOrDirectoryModal controller={exportDeckOrDirectoryController}/>}
+        {showExportDeckOrDirectoryModal &&
+            <ExportDeckOrDirectoryModal controller={exportDeckOrDirectoryController}/>}
         {showShareDeckOrDirectoryModal && <ShareDeckOrDirectoryModal controller={shareDeckOrDirectoryController}/>}
         {showMoveDeckOrDirectoryModal && <MoveDeckOrDirectoryModal controller={moveDeckOrDirectoryController}/>}
         {showImportCsvModal && <ImportCSVModal controller={importCSVController}/>}
+        {showImportCraftTableModal && <ImportCraftTableModal controller={importCraftTableController}/>}
 
 
         <PageTransitionWrapper>
             <KartAIContainer>
                 <ListView>
                     <ListViewHead loading={!initDone} title={
-                        currentDirectory ? currentDirectory.name : StaticText.DECK_VIEW
+                        initDone ? (currentDirectory ? currentDirectory.name : StaticText.DECK_VIEW) : ""
                     } icon={
                         currentDirectory ? <Folder/> : <Notes/>
                     } breadcrumbs={currentDirectoryPath} rightActionButton={
-                        currentDirectory ? learnFolderActionButton : newDeckActionButton
+                        !isXsWindow() ? (currentDirectory ? learnFolderActionButton : newDeckActionButton) : undefined
                     }/>
                     <Divider sx={{color: lightBorderColor, mb: 3}}/>
+                    <ClickAwayListener onClickAway={() => setSelectedDecksOrDirectories([])}>
+                        <div>
+                            <ListViewContent fullHeight>
 
-                    <ListViewContent fullHeight>
+                                <KartAIInfoText text={currentDirectory ? StaticText.EMPTY_FOLDER : StaticText.NO_DECKS}
+                                                show={deckOverviewItems.length === 0 && topLevelInitDone}/>
 
-                        <KartAIInfoText text={currentDirectory ? StaticText.EMPTY_FOLDER : StaticText.NO_DECKS}
-                                        show={deckOverviewItems.length === 0 && topLevelInitDone}/>
+                                {deckOverviewItems.map((deckOrDirectory, index) => {
+                                    return <DeckOverviewItem
+                                        controller={controller}
+                                        importCsvController={importCSVController}
+                                        importCraftTableController={importCraftTableController}
+                                        deckOrDir={deckOrDirectory}
+                                        key={deckOrDirectory.id}
+                                        selected={selectedDecksOrDirectories.some(item => item.id === deckOrDirectory.id)}
+                                        actions={{
+                                            onRename: () => {
+                                                renameDeckOrDirectoryController.open(deckOrDirectory)
+                                            },
+                                            onDelete() {
+                                                deleteDeckOrDirectoryController.open(deckOrDirectory)
+                                            },
+                                            onInfo() {
+                                                deckOrDirectoryInformationController.open(deckOrDirectory)
+                                            },
+                                            onExport() {
+                                                exportDeckOrDirectoryController.open(deckOrDirectory)
+                                            },
+                                            onShare() {
+                                                shareDeckOrDirectoryController.open(deckOrDirectory)
+                                            },
+                                            onMove() {
+                                                moveDeckOrDirectoryController.open(deckOrDirectory)
+                                            },
+                                        }}
+                                    />
+                                })}
 
-                        {deckOverviewItems.map((deckOrDirectory, index) => {
-                            return <DeckOverviewItem
-                                controller={controller}
-                                importCsvController={importCSVController}
-                                deckOrDir={deckOrDirectory}
-                                key={index}
-                                selected={selectedDecksOrDirectories.some(item => item.id === deckOrDirectory.id)}
-                                actions={{
-                                    onRename: () => {
-                                        renameDeckOrDirectoryController.open(deckOrDirectory)
-                                    },
-                                    onDelete() {
-                                        deleteDeckOrDirectoryController.open(deckOrDirectory)
-                                    },
-                                    onInfo() {
-                                        deckOrDirectoryInformationController.open(deckOrDirectory)
-                                    },
-                                    onExport() {
-                                        exportDeckOrDirectoryController.open(deckOrDirectory)
-                                    },
-                                    onShare() {
-                                        shareDeckOrDirectoryController.open(deckOrDirectory)
-                                    },
-                                    onMove() {
-                                        moveDeckOrDirectoryController.open(deckOrDirectory)
-                                    },
-                                }}
-                            />
-                        })}
+                            </ListViewContent>
+                        </div>
+                    </ClickAwayListener>
 
-                    </ListViewContent>
                 </ListView>
 
-                <KartAIBox mt={-2.5}>
+                <KartAIBox mt={2}>
                     <KartAIButton startIcon={<Add/>}
                                   variant="contained"
                                   color="secondary"

@@ -15,7 +15,7 @@ export interface StaticTextKeys {
     FIELD: string;
     DELETE_CARD_TYPE: string;
     FORGET_CARD: string;
-    FORGET_CARDS: string;
+    FORGET_CARDS: string; // {items}
     UPLOAD_IMAGE: string;
     OPTIONS: string;
     OPEN_DECK: string;
@@ -127,7 +127,7 @@ export interface StaticTextKeys {
     DECK_DELETED: string;
     DECKS_DELETED: string;
     SETTINGS_SAVED: string;
-    CARDS_DELETED: string;
+    CARDS_DELETED: string; // {items}
     CARD_DELETED: string;
     DECK_IMPORTED: string;
     DECKS_IMPORTED: string; // {num}
@@ -137,8 +137,8 @@ export interface StaticTextKeys {
     CARD_RESET: string;
     CARDS_RESET: string;
     CARD_PAUSED: string;
-    CARDS_PAUSED: string;
-    CARDS_CONTINUED: string;
+    CARDS_PAUSED: string; // {items}
+    CARDS_CONTINUED: string; // {items}
     CARD_CONTINUED: string;
     PAUSE_SELECTED: string;
     CONTINUE_SELECTED: string;
@@ -188,7 +188,6 @@ export interface StaticTextKeys {
     PAGE: string;
     ROWS_PER_PAGE: string;
     MAXIMUM_CARDS_REACHED: string;
-    DECK_TOO_MANY_CARDS: string;
     TOO_MANY_DECKS: string;
     DECK_EXCEEDS_LIMIT: string;
     CARDS_SELECTED: string;
@@ -243,7 +242,7 @@ export interface StaticTextKeys {
     DELETE_VARIANT_TEXT: string
     LEARN_DECK: string;
     SIMPLE_BOTH_DIRECTIONS: string
-    BACK_TO: string
+    BACK_TO: string // {name}
     DELETE_ACCOUNT: string
     DELETE_ACCOUNT_TEXT: string
     DELETE_ACCOUNT_WARNING_TEXT: string
@@ -260,23 +259,15 @@ export interface StaticTextKeys {
     GPT: string
     LANGAUGE_SETTINGS: string
     MAX_IMPORT_SIZE: string
-    STORAGE_LIMIT: string
+    STORAGE_LIMIT: string // {items}
     SLOGAN: string
     FEATURES: string
     GETTING_STARTED: string
-    LEARN_ANYTHING: string
-    LEARN_ANYTHING_DESCRIPTION: string
-    LEARN_ANYWHERE: string
-    LEARN_ANYWHERE_DESCRIPTION: string
-    LEARN_EFFICIENTLY: string
-    LEARN_EFFICIENTLY_DESCRIPTION: string
+
     ABOUT_KARTAI: string;
     KARTAI_DESCRIPTION: string;
-    LEARN_LANGUAGE_VOCABULARY: string;
-    LEARN_SCIENTIFIC_CONCEPTS: string;
-    IMPROVE_GEOGRAPHICAL_KNOWLEDGE: string;
-    CLOUD_SYNC: string;
-    CLOUD_SYNC_DESCRIPTION: string;
+    KARTAI_CLOUD: string;
+    KARTAI_CLOUD_DESCRIPTION: string;
     AI: string;
     AI_DESCRIPTION: string;
     CUSTOMIZATION_OPTIONS: string;
@@ -327,6 +318,7 @@ export interface StaticTextKeys {
     IMPORT_CARDS_TEXT: string // {cards}, {name}
     IMPORTED_NAME: string
     LOADING_DECKS: string
+    AUTHENTICATING: string
     LOADING_CARDS: string
     LOADING_CARD_TYPES: string
     INITIALIZING: string
@@ -349,4 +341,64 @@ export interface StaticTextKeys {
     ITEMS_SUCCESSFULLY_IMPORTED: string // {items}
     ITEM_SUCCESSFULLY_IMPORTED: string
     CSV_FIELDS: string
+    FIELD_CONTENT_TOO_LONG: string // {field}, {limit}
+    CARD_ADDED: string
+    PAUSE_CARD_TEXT: string
+    PAUSE_CARDS_TEXT: string
+    CONTINUE_CARD_TEXT: string
+    CONTINUE_CARDS_TEXT: string
+    PAUSE_CARDS: string // {items}
+    CONTINUE_CARDS: string // {items}
+    CARDS_RESETED: string //{cards}
+    CARD_RESETED: string
+    MOVE_CARDS: string // {items}
+    CUSTOM_STUDY_TEXT: string
+    EDIT_FIELDS: string
+    CARD_TYPE_CREATED: string
+    CARD_TYPE_DELETED: string
+    CARD_TYPE_VARIANT_ADDED: string
+    VARIANT_DELETED: string
+    DEFAULT_CARD_TYPES_CANNOT_BE_MODIFIED: string
+    OPENAI_SETTINGS: string
+    SYNC_INFO_TEXT: string // {duration}
+    INVALID_CARD_INFO: string
+    STORAGE_LIMIT_DECK: string // {items}
+    IMPORT_LIMIT: string // {items}
+    UNSHARE_ITEM: string
+    UNSHARE_ITEM_TEXT: string
+    ELEMENT_UNSHARED: string
+    NO_PUBLIC_DECKS: string
+    DOWNLOAD_DECK: string
+    DOWNLOAD_FORMAT: string
+    DOWNLOADS: string
+    EMPTY_DECKS_CANNOT_BE_PUBLISHED: string
+    EMPTY_FOLDERS_CANNOT_BE_PUBLISHED: string
+    FOLDER_TOO_MANY_CARDS: string // {cards}
+    DECK_TOO_MANY_CARDS: string // {cards}
+    EVALUATE_CARDS: string
+    UPLOAD_FILE: string
+    CARD_GENERATION_PROMPT: string //{cardType}, {eg}
+    NO_FILE_UPLOADED: string
+    FAILED_TO_GENERATE_CARDS: string
+    NOT_ENOUGH_INPUT_TEXT: string
+    REGENERATE_CARDS: string
+    ADD_CARDS: string
+    CARDS_ADDED: string //{cards}
+    NUM_OF_COLUMNS_TOO_SMALL: string
+    CRAFT_IMPORT_FAILED: string
+    CRAFT_DOCUMENT_LINK: string
+    NUM_OF_COLUMNS_IN_TABLE: string
+    TABLE_FIELDS: string
+    NUM_OF_COLUMNS_TOO_BIG: string
+    CRAFT_TABLE: string
+    READ_CRAFT_TABLE: string
+    SUB_SLOGAN: string
+    KARTAI_WEB: string
+    EFFICIENT_LEARNING_ALGORITHMS_FEATURE: string
+    EFFICIENT_LEARNING_ALGORITHMS_FEATURE_TEXT: string
+    ALL_RIGHTS_RESERVED: string
+    ICONS_BY: string
+    BY: string
+    IMPORT_CRAFT_TABLE: string
+    PRIVACY_POLICY_INFO: string
 }

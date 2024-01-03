@@ -8,6 +8,7 @@ import {StaticText} from "../../../../data/text/staticText";
 import ModalController, {ModalControllerOptions} from "../../../../controller/abstract/ModalController";
 import DeckUtils from "../../../../utils/DeckUtils";
 import DirectoryUtils from "../../../../utils/DirectoryUtils";
+import SharedItemsUtils from "../../../../utils/SharedItemsUtils";
 
 interface DeleteDeckOrDirectoryControllerOptions extends ModalControllerOptions {
     deckOverviewController: DeckOverviewController
@@ -78,15 +79,21 @@ export default class DeleteDeckOrDirectoryController extends ModalController<Del
         if (this.deckOverviewController.entitiesSelected()) {
             const deckIdsToDelete: string[] = []
             const directoryIdsToDelete: string[] = []
+            const sharedItemIdsToDelete: string[] = []
+
             for (const selectedDeckOrDirectory of this.deckOverviewController.states.selectedEntitiesState.val) {
                 if (selectedDeckOrDirectory.isDirectory) {
                     directoryIdsToDelete.push(selectedDeckOrDirectory.id)
                 } else {
                     deckIdsToDelete.push(selectedDeckOrDirectory.id)
                 }
+                if (selectedDeckOrDirectory.isShared) {
+                    sharedItemIdsToDelete.push(selectedDeckOrDirectory.id)
+                }
             }
             DeckUtils.getInstance().delete(deckIdsToDelete)
             DirectoryUtils.getInstance().delete(directoryIdsToDelete)
+            SharedItemsUtils.getInstance().deleteBySharedItemId(sharedItemIdsToDelete)
 
 
             const viewSelectionsTypes = this.deckOverviewController.getViewSelectionsTypes()
@@ -102,6 +109,11 @@ export default class DeleteDeckOrDirectoryController extends ModalController<Del
             this.deckOverviewController.states.selectedEntitiesState.set([])
         } else {
             const selectedDeckOrDirectory = this.deckOverviewController.getSelectedTempDeckOrDirectory()
+
+            if (selectedDeckOrDirectory.isShared) {
+                SharedItemsUtils.getInstance().deleteBySharedItemId([selectedDeckOrDirectory.id])
+            }
+
             if (selectedDeckOrDirectory.isDirectory) {
                 DirectoryUtils.getInstance().delete(selectedDeckOrDirectory.id)
                 this.snackbar(StaticText.FOLDER_DELETED, 4000)

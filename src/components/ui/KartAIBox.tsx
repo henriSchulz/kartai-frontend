@@ -2,6 +2,7 @@ import {SxProps} from "@mui/system";
 import {Box, Breakpoint, Theme} from "@mui/material";
 import React from "react";
 import {box} from "../../styles/box";
+import {isXsWindow} from "../../utils/general";
 
 interface KartAIBoxProps {
     sx?: SxProps<Theme>
@@ -12,16 +13,22 @@ interface KartAIBoxProps {
 
     flexCenter?: boolean
 
+    flexStart?: boolean
+
     gridCenter?: boolean
 
     gridStart?: boolean
 
     flexSpaceBetween?: boolean
 
+    className?: string
+
     mt?: number
     mb?: number
     ml?: number
     mr?: number
+
+    fullWidth?: boolean
 
     onClick?(event: React.MouseEvent<HTMLElement>): void
 
@@ -30,6 +37,18 @@ interface KartAIBoxProps {
     onDoubleClick?(): void
 
     key?: string | number
+
+    id?: string
+
+    hide?: boolean
+
+    hideIfXs?: boolean
+
+    spacing?: number
+
+    htmlString?: string
+
+    halfWidth?: boolean
 }
 
 export default function (props: KartAIBoxProps) {
@@ -71,12 +90,42 @@ export default function (props: KartAIBoxProps) {
             sx = {...sx, mr: props.mr}
         }
 
+        if (props.fullWidth) {
+            sx = {...sx, width: "100%"}
+        }
+
+        if (props.flexStart) {
+            sx = {...sx, display: "flex", justifyContent: "flex-start", alignItems: "center"}
+        }
+
+        if (props.spacing) {
+            sx = {...sx, gap: props.spacing}
+        }
+
+        if(props.halfWidth) {
+            sx = {...sx, width: "50%"}
+        }
+
         return sx
     }
 
 
-    return <Box onDoubleClick={props.onDoubleClick} onContextMenu={props.onContextMenu} onClick={props.onClick}
-                sx={getSx()}>
+    if (props.hideIfXs && isXsWindow()) return <></>
+
+    if (props.hide) return <></>
+
+    if (props.htmlString) return <Box
+        id={props.id} onDoubleClick={props.onDoubleClick}
+        onContextMenu={props.onContextMenu}
+        onClick={props.onClick}
+        sx={getSx()}
+        dangerouslySetInnerHTML={{__html: props.htmlString}}/>
+
+    return <Box className={props.className}
+        id={props.id} onDoubleClick={props.onDoubleClick}
+        onContextMenu={props.onContextMenu}
+        onClick={props.onClick}
+        sx={getSx()}>
         {props.children}
     </Box>
 }

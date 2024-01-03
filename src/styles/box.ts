@@ -10,4 +10,6 @@ export const box: SxProps<Theme> = {
     borderRadius: "12px",
     overflowY: "scroll",
     overflowX: "hidden",
+    py: 2,
+    px: 4
 }

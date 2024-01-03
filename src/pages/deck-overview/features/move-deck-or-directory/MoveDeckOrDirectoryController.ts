@@ -89,17 +89,20 @@ export default class MoveDeckOrDirectoryController extends ModalController<MoveD
         if (!this.deckOverviewController.entitiesSelected()) {
             const deckOrDirectory = this.deckOverviewController.getSelectedTempDeckOrDirectory()
             if (deckOrDirectory.isDirectory) {
-                store.dispatch(directoriesSlice.actions.update({
+                DirectoryUtils.getInstance().update({
                     ...deckOrDirectory,
                     parentId: dirId
-                }))
+                })
+
                 this.snackbar(StaticText.FOLDER_MOVED_TO.replaceAll("{dir}", dir ? dir.name : "/")
                     , 4000)
             } else {
-                store.dispatch(decksSlice.actions.update({
+
+                DeckUtils.getInstance().update({
                     ...deckOrDirectory,
                     parentId: dirId
-                }))
+                })
+
                 this.snackbar(StaticText.DECK_MOVED_TO.replaceAll("{dir}", dir ? dir.name : "/"),
                     4000)
             }

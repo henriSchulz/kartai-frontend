@@ -43,7 +43,7 @@ export default function () {
                 </MenuItem>
                 <Divider/>
                 <MenuItem onClick={() => {
-                    snackbar("Not implemented yet", 4000, "warning")
+                    navigate("/public-decks")
                 }}>
                     <ListItemIcon>
                         <Public fontSize="large"/>

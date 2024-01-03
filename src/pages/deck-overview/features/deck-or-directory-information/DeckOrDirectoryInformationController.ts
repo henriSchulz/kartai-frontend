@@ -3,6 +3,8 @@ import State from "../../../../types/State";
 import {SnackbarFunction} from "../../../../types/snackbar";
 import {DeckOrDirectory} from "../../../../types/DeckOrDirectory";
 import ModalController, {ModalControllerOptions} from "../../../../controller/abstract/ModalController";
+import CardUtils from "../../../../utils/CardUtils";
+import DeckUtils from "../../../../utils/DeckUtils";
 
 
 interface DeckOrDirectoryInformationControllerOptions extends ModalControllerOptions {
@@ -32,6 +34,19 @@ export default class DeckOrDirectoryInformationController extends ModalControlle
 
     submit = () => {
         this.close()
+    }
+
+
+    getCardsCountText = (): string => {
+        const tempDeckOrDirectory = this.deckOverviewController.states.tempDeckOrDirectoryState.val
+
+        if (!tempDeckOrDirectory?.isDirectory) {
+            return `${CardUtils.getInstance().getCardsByDeckId(
+                tempDeckOrDirectory?.id ?? "").length
+            }`
+        } else {
+            return CardUtils.getInstance().getCardsByDirectoryId(tempDeckOrDirectory?.id ?? "").length.toString()
+        }
     }
 
 

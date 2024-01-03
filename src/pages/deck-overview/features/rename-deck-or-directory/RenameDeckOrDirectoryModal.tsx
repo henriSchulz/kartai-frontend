@@ -17,10 +17,10 @@ export default function ({controller}: RenameDeckOrDirectoryModalProps) {
             title={controller.deckOverviewController.states.tempDeckOrDirectoryState?.val?.isDirectory ? StaticText.RENAME_FOLDER : StaticText.RENAME_DECK}
             submitButtonText={StaticText.RENAME}
         >
-            <KartAITextField
+            <KartAITextField autoFocus
                 defaultValue={controller.deckOverviewController.states.tempDeckOrDirectoryState?.val?.name}
                 id="deckOrDirectoryName"
-                label={controller.deckOverviewController.states.tempDeckOrDirectoryState?.val?.isDirectory ? StaticText.DECK_NAME : StaticText.FOLDER_NAME}
+                label={controller.deckOverviewController.states.tempDeckOrDirectoryState?.val?.isDirectory ? StaticText.FOLDER_NAME : StaticText.DECK_NAME}
                 size="medium" fullWidth variant="filled"/>
         </KartAIModal>
     </KartAIBox>

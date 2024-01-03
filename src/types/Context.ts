@@ -1,5 +1,6 @@
 import {SnackbarFunction} from "./snackbar";
 import LoadingBackdropFunction from "./LoadingBackdropFunction";
+import CardTypesController from "../features/card-types/CardTypesController";
 
 
 namespace Context {
@@ -9,6 +10,7 @@ namespace Context {
         topLevelInitDone: boolean
         snackbar: SnackbarFunction
         loadingBackdrop: LoadingBackdropFunction
+        cardTypesController: CardTypesController
     }
 
 }

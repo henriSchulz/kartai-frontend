@@ -7,7 +7,7 @@ import BaseModel from "./dbmodel/BaseModel";
 //omit the basel model fields from the store schema
 
 
-export type OmittedStoreSchema<T extends BaseModel> = Record<keyof (Omit<T, "id" |  "clientId">), StoreSchemaObject>
+export type OmittedStoreSchema<T extends BaseModel> = Record<keyof (Omit<T, "id">), StoreSchemaObject>
 
 
 export type StoreSchema<T extends BaseModel> = Record<keyof T, StoreSchemaObject>

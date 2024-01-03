@@ -18,7 +18,7 @@ export default function ({controller}: NewDeckOrDirectoryModalProps) {
                      onSubmit={controller.submit}
         >
 
-            <KartAITextField id="deckOrDirectoryName"
+            <KartAITextField autoFocus id="deckOrDirectoryName"
                              label={controller.states.isCreatingDeckState.val ? StaticText.DECK_NAME : StaticText.FOLDER_NAME}
                              size="medium" fullWidth variant="filled"/>
         </KartAIModal>

@@ -14,7 +14,7 @@ export default function ({children,}: { children: any }) {
             <motion.div
                 initial={{transform: "scale(1)", opacity: 1}}
                 animate={{transform: "scale(1)", opacity: 1}}
-                exit={{transform: "scale(0.97)", opacity: 0.1}}
+                exit={{transform: "scale(0.97)", opacity: 0.3}}
                 transition={{duration: 0.3, type: "tween"}}
             >
                 {children}

@@ -12,6 +12,8 @@ import {StaticText} from "../../../../data/text/staticText";
 import ModalController, {ModalControllerOptions} from "../../../../controller/abstract/ModalController";
 import DirectoryUtils from "../../../../utils/DirectoryUtils";
 import DeckUtils from "../../../../utils/DeckUtils";
+import CardUtils from "../../../../utils/CardUtils";
+import {Limits} from "../../../../Settings";
 
 interface ShareDeckOrDirectoryControllerOptions extends ModalControllerOptions {
     snackbar: SnackbarFunction,
@@ -30,6 +32,24 @@ export default class ShareDeckOrDirectoryController extends ModalController<Shar
     }
 
     open = (deckOrDirectory?: DeckOrDirectory) => {
+        if (deckOrDirectory?.isDirectory) {
+            const cardsCount = CardUtils.getInstance().getCardsByDirectoryId(deckOrDirectory.id).length
+            if (cardsCount === 0) {
+                return this.snackbar(StaticText.EMPTY_FOLDERS_CANNOT_BE_PUBLISHED, 4000, "error")
+            }
+            if (cardsCount > Limits.IMPORT_LIMIT) {
+                return this.snackbar(StaticText.FOLDER_TOO_MANY_CARDS.replaceAll("{cards}", Limits.IMPORT_LIMIT.toString()), 4000, "error")
+            }
+        } else {
+            const cardsCount = CardUtils.getInstance().getCardsByDeckId(deckOrDirectory!.id).length
+            if (cardsCount === 0) {
+                return this.snackbar(StaticText.EMPTY_DECKS_CANNOT_BE_PUBLISHED, 4000, "error")
+            }
+            if (cardsCount > Limits.IMPORT_LIMIT) {
+                return this.snackbar(StaticText.DECK_TOO_MANY_CARDS.replaceAll("{cards}", Limits.IMPORT_LIMIT.toString()), 4000, "error")
+            }
+        }
+
         this.deckOverviewController.selectTempDeckOrDirectory(deckOrDirectory!)
         this.states.showState.set(true)
     }
@@ -43,9 +63,10 @@ export default class ShareDeckOrDirectoryController extends ModalController<Shar
 
         const sharedItem: SharedItem = {
             id: generateModelId(),
+            sharedItemName: deckOrDirectory.name,
             sharedItemId: deckOrDirectory.id,
-            clientId: AuthenticationService.current!.id
-
+            clientId: AuthenticationService.current!.id,
+            downloads: 0
         }
 
         new ApiService("sharedItems").add([sharedItem]).catch(console.log)
@@ -55,14 +76,17 @@ export default class ShareDeckOrDirectoryController extends ModalController<Shar
                 ...deckOrDirectory,
                 isShared: 1
             })
+            this.snackbar(StaticText.FOLDER_SHARED, 4000)
         } else {
+
             DeckUtils.getInstance().update({
                 ...deckOrDirectory,
                 isShared: 1
             })
+            this.snackbar(StaticText.DECK_SHARED, 4000)
         }
 
         this.close()
-        this.snackbar(StaticText.DECK_SHARED, 4000)
+
     }
 }

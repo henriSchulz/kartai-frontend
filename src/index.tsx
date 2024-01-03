@@ -7,6 +7,13 @@ import store from "./stores/store";
 import {Provider} from "react-redux";
 import {BrowserRouter} from "react-router-dom";
 
+
+declare global {
+    interface Window {
+        tempInputValue: string;
+    }
+}
+
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
 );

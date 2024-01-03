@@ -19,6 +19,8 @@ import {
 import {useNavigate} from "react-router-dom";
 import DeckOverviewController from "../DeckOverviewController";
 import ImportCSVController from "../features/import-csv/ImportCSVController";
+import ImportCraftTableController from "../features/import-craft-table/ImportCraftTableController";
+import {useGlobalContext} from "../../../App";
 
 
 interface DeckListItemProps {
@@ -34,6 +36,7 @@ interface DeckListItemProps {
         onShare(): void
     },
     importCsvController: ImportCSVController
+    importCraftTableController: ImportCraftTableController
 }
 
 
@@ -42,6 +45,7 @@ function DeckOverviewItem(props: DeckListItemProps) {
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
+    const {cardTypesController} = useGlobalContext()
 
     const {controller} = props
 
@@ -51,13 +55,19 @@ function DeckOverviewItem(props: DeckListItemProps) {
         } else {
             return new CardUtils().getCardLearningStatesByDeckId(props.deckOrDir.id)
         }
-    }, [props.deckOrDir, props.importCsvController.states.showState.val])
+    }, [props.deckOrDir,
+        props.importCsvController.states.showState.val,
+        props.importCraftTableController.states.showState.val,
+        cardTypesController.states.showState.val
+    ])
 
     const openDeckOrDir = React.useCallback(() => {
         if (props.deckOrDir.isDirectory) {
             navigate(`/folder/${props.deckOrDir.id}`)
         } else {
-            navigate(`/deck/${props.deckOrDir.id}`)
+            if (CardUtils.getInstance().getCardsByDeckId(props.deckOrDir.id).length === 0) {
+                navigate(`/cards/${props.deckOrDir.id}`)
+            } else navigate(`/deck/${props.deckOrDir.id}`)
         }
     }, [props.deckOrDir])
 
@@ -80,14 +90,13 @@ function DeckOverviewItem(props: DeckListItemProps) {
 
             return
         }
-
         if ((event.ctrlKey && event.button === 0) || (event.metaKey && event.button === 0)) {
-            controller.onToggleSelectDeckOrDirectory({
+            controller.onToggleSelectViewEntity({
                 viewItem: props.deckOrDir,
                 setAsAnchorEl: controller.states.selectedEntitiesState.val.length === 0
             })
         } else if (event.target instanceof HTMLDivElement) {
-            controller.onToggleSelectDeckOrDirectory({
+            controller.onToggleSelectViewEntity({
                 viewItem: props.deckOrDir,
                 singleSelect: true,
                 setAsAnchorEl: true
@@ -96,7 +105,7 @@ function DeckOverviewItem(props: DeckListItemProps) {
     }
 
 
-    return (<KartAIBox>
+    return (<KartAIBox id={"row-" + props.deckOrDir.id}>
             {anchorEl && <DeckOverviewItemMenu
                 onClose={() => setAnchorEl(null)}
                 anchorEl={anchorEl}
@@ -117,7 +126,7 @@ function DeckOverviewItem(props: DeckListItemProps) {
                 sx={row(Boolean(props.selected))}
                 onClick={handleClickRow}
                 onContextMenu={handleContextMenu}
-                onDoubleClick={() => openDeckOrDir}>
+                onDoubleClick={openDeckOrDir}>
 
                 <Button sx={deckOverviewItemTitleButton} startIcon={
                     props.deckOrDir.isDirectory ? <Folder fontSize="medium"/> : <Notes fontSize="medium"/>

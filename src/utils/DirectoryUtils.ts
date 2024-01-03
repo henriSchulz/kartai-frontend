@@ -5,6 +5,9 @@ import DeckUtils from "./DeckUtils";
 import EntityUtils from "./abstract/EntityUtils";
 import {OmittedStoreSchema} from "../types/StoreSchema";
 import {directoriesSlice} from "../stores/slices";
+import EntityUtilsFuncOptions from "../types/EntityUtilsFuncOptions";
+import CardUtils from "./CardUtils";
+import {ID_PROPERTIES} from "./general";
 
 
 export default class DirectoryUtils extends EntityUtils<Directory> {
@@ -12,7 +15,7 @@ export default class DirectoryUtils extends EntityUtils<Directory> {
     constructor() {
         const storeSchema: OmittedStoreSchema<Directory> = {
             name: {type: "string", limit: 100},
-            parentId: {type: "string", limit: 36, reference: "directories", nullable: true},
+            parentId: {type: "string", limit: ID_PROPERTIES.length, reference: "directories", nullable: true},
             isShared: {type: "number", limit: 1}
         }
 
@@ -81,12 +84,19 @@ export default class DirectoryUtils extends EntityUtils<Directory> {
     }
 
     public getPathString(directoryId?: string | null, includeCurrentDir: boolean = false): string {
-
-
         if (!directoryId) return "/"
         const path = this.getParentDirectoriesPath(directoryId, includeCurrentDir)
 
         if (path.length === 0) return "/"
         return "/" + path.map(dir => dir.name).join("/")
+    }
+
+
+    async delete(ids: string | string[], options: EntityUtilsFuncOptions = {local: true, api: true}): Promise<void> {
+
+        CardUtils.getInstance().deleteByDirectoryId(ids)
+        DeckUtils.getInstance().deleteBy("parentId", ids, {local: true, api: false})
+
+        return super.delete(ids, options);
     }
 }

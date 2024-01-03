@@ -9,9 +9,10 @@ import {useNavigate} from "react-router-dom";
 import KartAIButton from "../ui/KartAIButton";
 import {getWindowWidth} from "../../utils/general";
 import {listViewHeader} from "../../styles/listView";
+import {Folder} from "@mui/icons-material";
 
 interface ListViewHeadProps {
-    title: string
+    title?: string
     breadcrumbs?: Directory[]
     icon: React.ReactNode,
     rightActionButton?: {
@@ -44,7 +45,7 @@ export default function (props: ListViewHeadProps) {
                 <StyledBreadcrumb icon={<HomeIcon/>} label={StaticText.HOME_MENU}
                                   onClick={() => navigate("/deck-overview")}/>
                 {props.breadcrumbs.map((directory, index) => {
-                    return <StyledBreadcrumb key={index} label={directory.name}
+                    return <StyledBreadcrumb icon={<Folder/>} key={directory.id} label={directory.name}
                                              onClick={() => navigate("/folder/" + directory.id)}/>
                 })}
             </Breadcrumbs>

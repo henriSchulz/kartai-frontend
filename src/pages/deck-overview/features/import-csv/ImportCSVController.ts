@@ -14,8 +14,8 @@ import Card from "../../../../types/dbmodel/Card";
 import FieldContent from "../../../../types/dbmodel/FieldContent";
 import {generateModelId} from "../../../../utils/general";
 import FieldContentUtils from "../../../../utils/FieldContentUtils";
-import store from "../../../../stores/store";
-import {cardsSlice, fieldContentsSlice} from "../../../../stores/slices";
+import {Limits} from "../../../../Settings";
+import LoadingBackdropFunction from "../../../../types/LoadingBackdropFunction";
 
 interface ImportCSVControllerOptions extends ModalControllerOptions {
     states: {
@@ -27,9 +27,12 @@ interface ImportCSVControllerOptions extends ModalControllerOptions {
         csvFileTextState: State<string>
         parsedCsvState: State<string[][]>
         csvDelimiterState: State<string>
+        loadingState: State<boolean>
+        uploadDurationState: State<number>
     },
     deckOverviewController: DeckOverviewController
     newDeckOrDirectoryController: NewDeckOrDirectoryController
+    loadingBackdrop: LoadingBackdropFunction
 }
 
 
@@ -37,11 +40,13 @@ export default class ImportCSVController extends ModalController<ImportCSVContro
 
     public deckOverviewController: DeckOverviewController
     public newDeckOrDirectoryController: NewDeckOrDirectoryController
+    public loadingBackdrop: LoadingBackdropFunction
 
     constructor(options: ImportCSVControllerOptions) {
         super(options);
         this.deckOverviewController = options.deckOverviewController
         this.newDeckOrDirectoryController = options.newDeckOrDirectoryController
+        this.loadingBackdrop = options.loadingBackdrop
     }
 
     public onSelectCsvFile = async (files: File[]) => {
@@ -52,7 +57,9 @@ export default class ImportCSVController extends ModalController<ImportCSVContro
         const file = files[0]
 
         if (file.size > 4 * 1024 * 1024) {
-            return this.snackbar(StaticText.FILE_TOO_BIG, 4000, "error")
+            return this.snackbar(StaticText.FILE_TOO_BIG.replaceAll("{name}", file.name)
+                    .replaceAll("{size}", "4")
+                , 4000, "error")
         }
 
         const text = await file.text()
@@ -69,6 +76,7 @@ export default class ImportCSVController extends ModalController<ImportCSVContro
         this.states.csvFileTextState.set("")
         this.states.csvDelimiterState.set("\t")
         this.states.fieldsChoiceState.set({})
+        this.states.selectedCardTypeIdState.set("")
     }
 
     public setDefaultSelectedDeck = () => {
@@ -120,7 +128,8 @@ export default class ImportCSVController extends ModalController<ImportCSVContro
         return false;
     }
 
-    public submit = () => {
+    public submit = async () => {
+
         const cardsToAdd: Card[] = []
         const fieldContentsToAdd: FieldContent[] = []
 
@@ -132,8 +141,11 @@ export default class ImportCSVController extends ModalController<ImportCSVContro
 
         const selectedDeck = DeckUtils.getInstance().getById(this.states.selectedDestinationDeckIdState.val)
 
-        const cCount = CardUtils.getInstance().getSize()
-        const maxCCount = CardUtils.getInstance().maxClientSize
+        const deckCardsCount = CardUtils.getInstance().getCardsByDeckId(selectedDeck.id).length
+
+        if (deckCardsCount + this.states.parsedCsvState.val.length > Limits.DECK_SIZE_LIMIT) {
+            return this.snackbar(StaticText.STORAGE_LIMIT_DECK.replaceAll("{items}", Limits.DECK_SIZE_LIMIT.toString()), 4000, "error")
+        }
 
         if (entries.length !== this.states.parsedCsvState.val[0].length) {
             return this.snackbar(StaticText.ALL_FIELDS_MUST_BE_ASSIGNED, 6000, "error")
@@ -152,33 +164,53 @@ export default class ImportCSVController extends ModalController<ImportCSVContro
             return this.snackbar(StaticText.ALLOW_MINIMUM_EMPTY_FIELDS, 6000, "error")
         }
 
+        let validRow;
         for (const row of this.states.parsedCsvState.val) {
+            validRow = true
             const cardId = generateModelId()
-            cardsToAdd.push({
-                learningState: 0,
-                dueAt: Date.now(),
-                id: cardId,
-                cardTypeId: this.states.selectedCardTypeIdState.val,
-                deckId: selectedDeck.id,
-                paused: 0,
-            })
-
             for (const [csvFieldIndex, chosenFieldId] of entries) {
                 if (chosenFieldId !== "EMPTY") {
+
+                    if (!row[Number(csvFieldIndex)]) {
+                        validRow = false
+                        break
+                    }
+
+                    if (row[Number(csvFieldIndex)].length > FieldContentUtils.getInstance().storeSchema.content.limit) {
+                        validRow = false
+                        break
+                    }
+
+
+                    const content = row[Number(csvFieldIndex)]
+
                     fieldContentsToAdd.push({
                         id: generateModelId(),
                         fieldId: chosenFieldId,
                         cardId: cardId,
-                        content: row[Number(csvFieldIndex)].length > FieldContentUtils.getInstance().storeSchema.content.limit ? " " : row[Number(csvFieldIndex)],
+                        content
                     })
                 }
             }
+
+            if (validRow) {
+                cardsToAdd.push({
+                    learningState: 0,
+                    dueAt: Date.now(),
+                    id: cardId,
+                    cardTypeId: this.states.selectedCardTypeIdState.val,
+                    deckId: selectedDeck.id,
+                    paused: 0,
+                })
+            }
+
+
         }
-
-        CardUtils.getInstance().addCardsAndFieldContents(cardsToAdd, fieldContentsToAdd)
-
-        this.snackbar(StaticText.CARDS_IMPORTED.replaceAll("{items}", cardsToAdd.length.toString()), 4000, "success")
         this.close()
+        this.loadingBackdrop(true)
+        await CardUtils.getInstance().addCardsAndFieldContents(cardsToAdd, fieldContentsToAdd)
+        this.loadingBackdrop(false)
+        this.snackbar(StaticText.CARDS_IMPORTED.replaceAll("{items}", cardsToAdd.length.toString()), 4000, "success")
     }
 
     public onParseCsv = () => {
@@ -189,26 +221,37 @@ export default class ImportCSVController extends ModalController<ImportCSVContro
             return this.snackbar(StaticText.COULD_NOT_PARSE_CSV, 4000, "error")
         }
 
-        if (parseResult.table.length === 0) {
+        const csvRows = parseResult.addedRows
+
+
+
+        if (csvRows === 0) {
             this.close()
             return this.snackbar(StaticText.COULD_NOT_PARSE_CSV, 4000, "error")
         }
 
-        const cardCount = CardUtils.getInstance().getSize()
-        const maxCardCount = CardUtils.getInstance().maxClientSize
 
-        if (cardCount >= maxCardCount) {
+        if (csvRows > Limits.IMPORT_LIMIT) {
             this.close()
-            return this.snackbar(StaticText.STORAGE_LIMIT.replaceAll("{x}", maxCardCount.toString()), 4000, "error")
+            return this.snackbar(StaticText.IMPORT_LIMIT.replaceAll("{items}", Limits.IMPORT_LIMIT.toString()), 4000, "error")
         }
 
-        this.snackbar(StaticText.CSV_SUCCESSFULLY_PARSED.replaceAll("{items}", parseResult.addedRows.toString()), 4000, "success")
+        const maxCardCount = CardUtils.getInstance().maxClientSize
+
+        if (!CardUtils.getInstance().canAdd(csvRows)) {
+            this.close()
+            return this.snackbar(StaticText.STORAGE_LIMIT.replaceAll("{items}", maxCardCount.toString()), 4000, "error")
+        }
+
+
+        this.snackbar(StaticText.CSV_SUCCESSFULLY_PARSED.replaceAll("{items}", parseResult.addedRows.toString()), 2000, "success")
         this.states.parsedCsvState.set(parseResult.table)
         this.setDefaultSelectedDeck()
         const cardTypeId = this.setDefaultSelectedCardType()
         if (cardTypeId) {
             this.setDefaultFieldsChoice(parseResult.table, FieldUtils.getInstance().getAllBy("cardTypeId", cardTypeId))
         }
+        this.states.activeCsvImportStepState.set(prev => prev + 1)
     }
 
     public setDefaultFieldsChoice = (table: string[][], fields: Field[]) => {

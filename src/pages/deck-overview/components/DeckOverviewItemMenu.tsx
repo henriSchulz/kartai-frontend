@@ -12,7 +12,6 @@ import KartAIItemMenu, {ItemMenuItem} from "../../../components/KartAIItemMenu";
 
 interface DeckOverviewItemMenuProps {
     onClose(): void
-
     anchorEl: HTMLElement | null
     entitiesSelected: boolean
     isShared: boolean

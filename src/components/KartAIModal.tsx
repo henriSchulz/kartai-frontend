@@ -15,6 +15,7 @@ import {TransitionProps} from "@mui/material/transitions";
 import CloseIcon from "@mui/icons-material/Close";
 import KartAIButton from "./ui/KartAIButton";
 import {StaticText} from "../data/text/staticText";
+import KartAIBox from "./ui/KartAIBox";
 
 export const StyledBox = styled(Paper)`
   border-radius: 8px;
@@ -45,7 +46,7 @@ interface KartAIModalProps {
     title: string
     show: boolean
 
-    onClose(): void
+    onClose?(): void
 
     onSubmit?(): void
 
@@ -68,6 +69,12 @@ interface KartAIModalProps {
     submitButtonText?: string
 
     transitionDuration?: number
+
+    actionButton?: {
+        text: string
+        icon?: React.ReactNode
+        onClick(): void
+    }
 }
 
 export default function (props: KartAIModalProps) {
@@ -95,7 +102,7 @@ export default function (props: KartAIModalProps) {
             disabled={props.loading}
             onClick={props.notCancelable ? () => "" : props.onClose}
             sx={{
-                position: 'absolute',
+                // position: 'absolute',
                 right: 8,
                 top: 8,
                 color: (theme) => theme.palette.grey[500],
@@ -107,16 +114,31 @@ export default function (props: KartAIModalProps) {
             {props.children}
         </DialogContent>
         {!props.hideButtons && <DialogActions>
-            {!props.hideCancelButton &&
-                <KartAIButton variant="outlined"
-                              disabled={props.loading || props.notCancelable}
-                              onClick={props.onClose}>
-                    {props.cancelButtonText ?? StaticText.CANCEL}
-                </KartAIButton>}
-            <KartAIButton loading={props.loading} loadingText={StaticText.LOADING} variant="outlined"
-                          disabled={props.loading} onClick={props.onSubmit ?? props.onClose}>
-                {props.submitButtonText ?? StaticText.CONFIRM}
-            </KartAIButton>
+            <KartAIBox flexSpaceBetween fullWidth>
+                {props.actionButton ?
+                    <KartAIButton color="secondary"
+                                  startIcon={props.actionButton.icon}
+                                  onClick={props.actionButton.onClick}
+                                  sx={{ml: 2}}
+                                  variant="outlined">
+                        {props.actionButton.text}
+                    </KartAIButton>
+                    : <div style={{visibility: "hidden"}}></div>}
+
+                <KartAIBox>
+                    {!props.hideCancelButton &&
+                        <KartAIButton variant="outlined"
+                                      disabled={props.loading || props.notCancelable}
+                                      onClick={props.onClose}>
+                            {props.cancelButtonText ?? StaticText.CANCEL}
+                        </KartAIButton>}
+                    <KartAIButton ml={1} loading={props.loading} loadingText={StaticText.LOADING} variant="outlined"
+                                  disabled={props.loading} onClick={props.onSubmit ?? props.onClose}>
+                        {props.submitButtonText ?? StaticText.CONFIRM}
+                    </KartAIButton>
+                </KartAIBox>
+            </KartAIBox>
+
 
         </DialogActions>}
     </Dialog>

@@ -1,6 +1,7 @@
 import {initializeApp} from "firebase/app";
 import {getAuth, GoogleAuthProvider} from "firebase/auth"
-
+import {getAnalytics} from "firebase/analytics";
+import {Settings} from "../Settings";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBYOLGu7JKs3EAUErIUlVZz9sTHpURCZY0",
@@ -14,6 +15,10 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
+if (Settings.ALLOWS_COOKIES) {
+    console.log("Initializing analytics...")
+    getAnalytics(app);
+}
 
 const auth = getAuth(app)
 const provider = new GoogleAuthProvider()

@@ -1,19 +1,22 @@
-import axios from "axios";
-
-import {Box, Theme} from "@mui/material";
-import {SxProps} from "@mui/system";
 import {StaticTextKeys} from "./StaticTextKeys";
 import de from "./langs/de"
+import Language from "../../types/Language";
+import {Settings} from "../../Settings";
 
-const LANGUAGE = "de"
+const {LANGUAGE} = Settings
 
 
-const LANGUAGES = {
-    de
+const LANGUAGE_DATA = {
+    de,
 }
 
 export const StaticText: StaticTextKeys = {
-    ...LANGUAGES[LANGUAGE]
+    ...LANGUAGE_DATA[LANGUAGE]
+}
+
+
+export const LANGUAGE_NAMES: Record<Language, string> = {
+    de: StaticText.GERMAN,
 }
 
 

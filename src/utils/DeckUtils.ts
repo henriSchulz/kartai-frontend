@@ -3,6 +3,9 @@ import Deck from "../types/dbmodel/Deck";
 import EntityUtils from "./abstract/EntityUtils";
 import {OmittedStoreSchema} from "../types/StoreSchema";
 import {decksSlice} from "../stores/slices";
+import EntityUtilsFuncOptions from "../types/EntityUtilsFuncOptions";
+import CardUtils from "./CardUtils";
+import {ID_PROPERTIES} from "./general";
 
 
 export default class DeckUtils extends EntityUtils<Deck> {
@@ -10,7 +13,7 @@ export default class DeckUtils extends EntityUtils<Deck> {
     constructor() {
         const storeSchema: OmittedStoreSchema<Deck> = {
             name: {type: "string", limit: 100},
-            parentId: {type: "string", limit: 36, reference: "directories", nullable: true},
+            parentId: {type: "string", limit: ID_PROPERTIES.length, reference: "directories", nullable: true},
             isShared: {type: "number", limit: 1}
         }
 
@@ -34,6 +37,10 @@ export default class DeckUtils extends EntityUtils<Deck> {
     }
 
 
+    async delete(ids: string | string[], options: EntityUtilsFuncOptions = {local: true, api: true}): Promise<void> {
+        CardUtils.getInstance().deleteBy("deckId", ids, {local: true, api: false})
+        return super.delete(ids, options);
+    }
 
 
 }

@@ -1,19 +1,22 @@
 import Client from "../types/Client";
 
 
-import {getRedirectResult} from "firebase/auth";
-import {auth} from "../data/firebaseConfig";
+import {createUserWithEmailAndPassword, getRedirectResult} from "firebase/auth";
+import {auth, provider} from "../config/firebaseConfig";
 import RequestBuilder from "../lib/RequestBuilder";
 import {Settings} from "../Settings";
 import {LocalStorageKeys} from "../data/LocalStorageKeys";
+import {wait} from "../utils/general";
+import {signInWithPopup, signInWithEmailAndPassword} from "firebase/auth";
 
 
 export default class AuthenticationService {
 
     public static current: Client | null = null
 
+    // returns true if the user is logged in
 
-    public static async init(): Promise<Error | null> {
+    public static async init(): Promise<boolean> {
 
         await getRedirectResult(auth)
 
@@ -30,16 +33,33 @@ export default class AuthenticationService {
                 imgUrl: googleUser!.photoURL ?? ""
             }
 
-            return null
+            return true
         } else {
-            return new Error("No current user found")
+            return false
         }
+    }
 
+    public static async signInWithGoogle(): Promise<void> {
+        await signInWithPopup(auth, provider)
+        await wait(100)
+        window.location.href = "/deck-overview"
+    }
 
+    public static async signInWithEmailPassword(email: string, password: string): Promise<void> {
+        await signInWithEmailAndPassword(auth, email, password)
+        await wait(100)
+        window.location.href = "/deck-overview"
+    }
+
+    public static async createWithEmailPassword(email: string, password: string): Promise<void> {
+        await createUserWithEmailAndPassword(auth, email, password)
+        await wait(100)
+        window.location.href = "/deck-overview"
     }
 
     public static async signOut(): Promise<void> {
         await auth.signOut()
+        window.location.href = "/"
     }
 
 
@@ -53,6 +73,7 @@ export default class AuthenticationService {
         await request.send()
 
         Object.values(LocalStorageKeys).forEach(uuid => localStorage.removeItem(uuid as string))
+        window.location.href = "/"
     }
 
 

@@ -217,7 +217,7 @@ export default class DeckOverviewController extends ViewEntitySelectionControlle
         const cardCount = CardUtils.getInstance().getSize()
 
         if (cardCount >= maxCardCount) {
-            return this.snackbar(StaticText.STORAGE_LIMIT.replaceAll("{x}", maxCardCount.toString()), 4000, "error")
+            return this.snackbar(StaticText.STORAGE_LIMIT.replaceAll("{items}", maxCardCount.toString()), 4000, "error")
         }
 
         if (!files) return;
@@ -229,11 +229,14 @@ export default class DeckOverviewController extends ViewEntitySelectionControlle
 
         for (const file of files) {
             if (file.size > 4 * 1024 * 1024) {
-                this.snackbar(StaticText.FILE_TOO_BIG.replaceAll("{name}", file.name), 5000, "error");
+                this.snackbar(StaticText.FILE_TOO_BIG.replaceAll("{name}", file.name)
+                        .replaceAll("{size}", "4")
+                    , 5000, "error");
                 return this.loadingBackdrop(false)
             }
             const fileContent: string = await file.text()
-            const result = ImportExportUtils.importFromJson(fileContent)
+
+            const result = await ImportExportUtils.importFromJson(fileContent)
 
             if (!result) {
                 this.snackbar(StaticText.INVALID_FILE_FORMAT.replaceAll("{name}", file.name), 5000, "error");
@@ -264,4 +267,21 @@ export default class DeckOverviewController extends ViewEntitySelectionControlle
         const input = document.getElementById(this.csvFileSelectorId) as HTMLInputElement
         if (input) input.click()
     }
+
+
+    public getOnKeyboardShortcut = (shortcuts: {[char: string]: () => void}, isModalOpen: boolean) => {
+        return (event: KeyboardEvent) => {
+            if(isModalOpen) return
+
+            const ctrl = event.ctrlKey || event.metaKey
+
+            if(ctrl) {
+                const char = event.key
+                if(shortcuts[char]) {
+                    shortcuts[char]()
+                }
+            }
+        }
+    }
+
 }

@@ -9,6 +9,7 @@ export const defaultBackgroundGradient = "linear-gradient(to right top, rgba(240
 export const newCardsCountColor = "#21658F"
 export const learnCardsCountColor = "#8F212E"
 export const reviewCardsCountColor = "#218F4B"
+export const pausedColor = "#8F8221"
 export const loadingGray= "#E5E5E5"
 
 

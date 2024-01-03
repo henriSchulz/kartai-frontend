@@ -31,13 +31,13 @@ export default function (props: ItemMenuProps) {
             open={props.show}
             keepMounted={false}
             anchorEl={props.anchorEl}
-            transitionDuration={250}
+            transitionDuration={100}
             onClose={props.onClose}
         >
-            <MenuList sx={{width: 200}}>
+            <MenuList>
                 {props.menuItems.map((item, index) => {
                     if (item.hidden) {
-                        return <div key={index}></div>
+                        return <div key={index*Math.random()}></div>
                     }
 
                     return <div key={index}>

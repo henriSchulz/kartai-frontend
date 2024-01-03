@@ -15,22 +15,14 @@ import FieldUtils from "./FieldUtils";
 import CardTypeVariantUtils from "./CardTypeVariantUtils";
 import CardTypeUtils from "./CardTypeUtils";
 import {DeckOrDirectory} from "../types/DeckOrDirectory";
-import store from "../stores/store";
-import {
-    directoriesSlice,
-    decksSlice,
-    cardsSlice,
-    cardTypesSlice,
-    cardTypeVariantsSlice,
-    fieldsSlice,
-    fieldContentsSlice,
-} from "../stores/slices";
+import {isDefaultCardType} from "../data/defaultCardType";
+import EntityUtilsFuncOptions from "../types/EntityUtilsFuncOptions";
 
 
 export default class ImportExportUtils {
 
 
-    public static importFromJson(json: string): boolean { //If the import is successful, return true. Otherwise, return false
+    public static async importFromJson(json: string): Promise<boolean> { //If the import is successful, return true. Otherwise, return false
         try {
             const importExportObject = JSON.parse(json) as ImportExportObject
             const {
@@ -64,10 +56,10 @@ export default class ImportExportUtils {
             fieldContents: [] as FieldContent[]
         }
         for (const card of importExportObject.cards.filter(e => e.deckId === oldDeckId)) {
-            if (!CardUtils.getInstance().isValidEntity(card)) return false
+            if (!CardUtils.getInstance().isValidEntity(card, ["paused"])) return false
             const {id: oldCardId, ...cardToAdd} = card
             const newCardId = generateModelId()
-            itemsToImport.cards.push({...cardToAdd, id: newCardId, deckId: newDeckId})
+            itemsToImport.cards.push({...cardToAdd, id: newCardId, deckId: newDeckId, paused: 0})
             for (const fieldContent of importExportObject.fieldContents.filter(e => e.cardId === oldCardId)) {
                 if (!FieldContentUtils.getInstance().isValidEntity(fieldContent)) return false
                 const {id: oldFieldContentId, ...fieldContentToAdd} = fieldContent
@@ -82,7 +74,10 @@ export default class ImportExportUtils {
         return itemsToImport
     }
 
-    public static import(importExportObject: ImportExportObject): boolean {
+    public static async import(importExportObject: ImportExportObject, options: EntityUtilsFuncOptions = {
+        local: true,
+        api: true
+    }): Promise<boolean> {
         try {
             const itemsToImport = {
                 directories: [] as Directory[],
@@ -101,10 +96,10 @@ export default class ImportExportUtils {
                 const newDirectoryId = generateModelId()
                 itemsToImport.directories.push({...directoryToAdd, id: newDirectoryId})
                 for (const deck of importExportObject.decks.filter(e => e.parentId === oldDirectoryId)) {
-                    if (!DeckUtils.getInstance().isValidEntity(deck)) return false
+                    if (!DeckUtils.getInstance().isValidEntity(deck, ["isShared"])) return false
                     const {id: oldDeckId, ...deckToAdd} = deck
                     const newDeckId = generateModelId()
-                    itemsToImport.decks.push({...deckToAdd, id: newDeckId, parentId: newDirectoryId})
+                    itemsToImport.decks.push({...deckToAdd, id: newDeckId, parentId: newDirectoryId, isShared: 0})
                     const res = this.deckImport(oldDeckId, newDeckId, importExportObject)
                     if (!res) return false
                     const {cards, fieldContents} = res
@@ -114,10 +109,10 @@ export default class ImportExportUtils {
             }
             if (importExportObject.directories.length === 0) {
                 for (const deck of importExportObject.decks) {
-                    if (!DeckUtils.getInstance().isValidEntity(deck)) return false
+                    if (!DeckUtils.getInstance().isValidEntity(deck, ["isShared"])) return false
                     const {id: oldDeckId, ...deckToAdd} = deck
                     const newDeckId = generateModelId()
-                    itemsToImport.decks.push({...deckToAdd, id: newDeckId})
+                    itemsToImport.decks.push({...deckToAdd, id: newDeckId, isShared: 0})
                     const res = this.deckImport(oldDeckId, newDeckId, importExportObject)
                     if (!res) return false
                     const {cards, fieldContents} = res
@@ -128,6 +123,7 @@ export default class ImportExportUtils {
 
             for (const cardType of importExportObject.cardTypes) {
                 if (!CardTypeUtils.getInstance().isValidEntity(cardType)) return false
+                if (isDefaultCardType(cardType)) continue
                 const {id: oldCardTypeId, ...cardTypeToAdd} = cardType
                 const newCardTypeId = generateModelId()
                 itemsToImport.cardTypes.push({...cardTypeToAdd, id: newCardTypeId})
@@ -150,10 +146,10 @@ export default class ImportExportUtils {
             }
 
 
-            DirectoryUtils.getInstance().add(itemsToImport.directories)
-            DeckUtils.getInstance().add(itemsToImport.decks)
-            CardUtils.getInstance().addCardsAndFieldContents(itemsToImport.cards, itemsToImport.fieldContents)
-            CardTypeUtils.getInstance().addCardTypesAndVariantsAndFields(itemsToImport.cardTypes, itemsToImport.cardTypeVariants, itemsToImport.fields)
+            await DirectoryUtils.getInstance().add(itemsToImport.directories, options)
+            await DeckUtils.getInstance().add(itemsToImport.decks, options)
+            await CardUtils.getInstance().addCardsAndFieldContents(itemsToImport.cards, itemsToImport.fieldContents, options)
+            await CardTypeUtils.getInstance().addCardTypesAndVariantsAndFields(itemsToImport.cardTypes, itemsToImport.cardTypeVariants, itemsToImport.fields, options)
             return true
         } catch (e) {
             console.log(e)
@@ -174,7 +170,7 @@ export default class ImportExportUtils {
 
         if (deckOrDirectory.isDirectory) {
             itemsToExport.directories = [...DirectoryUtils.getInstance().getSubDirectories(deckOrDirectory.id), deckOrDirectory as Directory]
-            const decks = DeckUtils.getInstance().getDecksByParentId(deckOrDirectory.id)
+            const decks = DirectoryUtils.getInstance().getSubDecks(deckOrDirectory.id)
             itemsToExport.decks.push(...decks)
             for (const deck of decks) {
                 const cards = CardUtils.getInstance().getCardsByDeckId(deckOrDirectory.id)
@@ -254,7 +250,7 @@ export default class ImportExportUtils {
         }
 
         return cards.map(c => {
-            return FieldContentUtils.getInstance().getAllBy("cardId", c.id).map(f => f.content).join(csvDelimiter)
+            return FieldContentUtils.getInstance().getAllBy("cardId", c.id).map(f => f.content.replaceAll("\n", "")).join(csvDelimiter)
         }).join("\n")
 
     }

@@ -5,3 +5,9 @@ export const kartAIInfoText: SxProps = {
     opacity: .25,
     textAlign: "center",
 }
+
+
+export const mediumBoldText: SxProps = {
+    fontSize: 25,
+    fontWeight: "550",
+}

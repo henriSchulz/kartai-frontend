@@ -45,10 +45,10 @@ export default function (props: KartAIPopperMenuProps) {
                         <MenuList autoFocusItem={props.show}>
                             {props.menuItems.map((item, index) => {
                                 if (item.hidden) {
-                                    return <div key={index}></div>
+                                    return <div key={index*Math.random()}></div>
                                 }
 
-                                return <div key={index}>
+                                return <div key={index*Math.random()}>
                                     <MenuItem onClick={() => {
                                         item.onClick()
                                         props.onClose()

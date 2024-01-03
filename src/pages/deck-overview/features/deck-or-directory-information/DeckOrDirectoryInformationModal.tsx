@@ -44,18 +44,16 @@ export default function ({controller}: DeckOrDirectoryInformationModalProps) {
                                       controller.deckOverviewController.states.tempDeckOrDirectoryState.val?.parentId, true)
                                   }/>
                 </ListItem>
-                {!controller.deckOverviewController.states.tempDeckOrDirectoryState.val?.isDirectory &&
-                    <ListItem disablePadding>
-                        <ListItemIcon>
-                            <Functions fontSize="large"/>
-                        </ListItemIcon>
-                        <ListItemText primaryTypographyProps={{fontSize: '20px', fontWeight: 550}}
-                                      secondaryTypographyProps={{fontSize: '17px'}}
-                                      primary={StaticText.CARDS}
-                                      secondary={`${CardUtils.getInstance().getCardsByDeckId(
-                                          controller.deckOverviewController.states.tempDeckOrDirectoryState.val?.id ?? "").length
-                                      } / ${DeckUtils.getInstance().maxClientSize}`}/>
-                    </ListItem>}
+
+                <ListItem disablePadding>
+                    <ListItemIcon>
+                        <Functions fontSize="large"/>
+                    </ListItemIcon>
+                    <ListItemText primaryTypographyProps={{fontSize: '20px', fontWeight: 550}}
+                                  secondaryTypographyProps={{fontSize: '17px'}}
+                                  primary={StaticText.CARDS}
+                                  secondary={controller.getCardsCountText()}/>
+                </ListItem>
             </List>
         </KartAIModal>
 

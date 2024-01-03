@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import {Inventory2, Menu as MenuIcon} from "@mui/icons-material"
 import Menu from '@mui/material/Menu';
-import {Theme, Tooltip} from "@mui/material";
+import {Theme} from "@mui/material";
 import {useLocation, useNavigate} from "react-router-dom";
 import {theme} from "../styles/theme";
 import {SxProps} from "@mui/system";
@@ -13,23 +13,25 @@ import OutlinedIconButton from "../components/OutlinedIconButton";
 import KartAIBox from "../components/ui/KartAIBox";
 import {StaticText} from "../data/text/staticText";
 import {Icons} from "../asserts/asserts";
-import {showCardTypesOption} from "../utils/general";
 import KartAIButton from "../components/ui/KartAIButton";
 import {useGlobalContext} from "../App";
 import {Settings as SettingsIcon} from "@mui/icons-material"
+import AppController from "../AppController";
+import AuthenticationService from "../services/AuthenticationService";
 
 
 interface NavbarProps {
 
     sx?: SxProps<Theme>
 
-    onClickGettingStarted(): void
 
     onOpenSettings(): void
 
     onOpenCardTypes(): void
 
     onOpenSettings(): void
+
+    appController: AppController
 }
 
 export default function (props: NavbarProps) {
@@ -56,6 +58,9 @@ export default function (props: NavbarProps) {
         setMobileMoreAnchorEl(event.currentTarget);
     };
 
+    const showKartAIWeb = location.pathname === "/" ||
+        (location.pathname.startsWith("/public-deck/") && !AuthenticationService.current)
+
     const menu = [
         {
             icon: <Inventory2 fontSize="medium"/>, text: StaticText.CARD_TYPES, onClick() {
@@ -67,7 +72,7 @@ export default function (props: NavbarProps) {
                 props.onOpenSettings()
             }
         }
-    ].slice(!showCardTypesOption(location.pathname) ? 1 : 0)
+    ].slice(!props.appController.showCardTypesOption(location.pathname) ? 1 : 0)
 
 
     const renderMobileMenu = (
@@ -125,20 +130,22 @@ export default function (props: NavbarProps) {
                     </KartAIBox>
                     <KartAIBox sx={{flexGrow: 1}}/>
                     <KartAIBox sx={{display: {xs: 'none', md: 'flex'}}}>
-                        {showCardTypesOption(location.pathname) && <OutlinedIconButton>
-                            <Inventory2 fontSize={"medium"}/>
-                        </OutlinedIconButton>}
+                        {
+                            props.appController.showCardTypesOption(location.pathname) &&
+                            <OutlinedIconButton disabled={!topLevelInitDone} onClick={props.onOpenCardTypes}>
+                                <Inventory2 fontSize={"medium"}/>
+                            </OutlinedIconButton>
+                        }
 
-                        {location.pathname === "/" &&
-                            <KartAIButton disabled={!topLevelInitDone} onClick={props.onClickGettingStarted}
-                                          variant="outlined"
-                                          sx={{mr: 2}}>
-                                {StaticText.FLASHCARDS}
+                        {showKartAIWeb &&
+                            <KartAIButton disabled={!topLevelInitDone} onClick={() => navigate("/public-decks")}
+                                          variant="outlined">
+                                {StaticText.KARTAI_WEB}
                             </KartAIButton>}
 
 
-                        <OutlinedIconButton onClick={props.onClickGettingStarted} disabled={!topLevelInitDone}
-                                            sx={{mr: 2}}>
+                        <OutlinedIconButton onClick={props.onOpenSettings} disabled={!topLevelInitDone}
+                                            sx={{mr: 2, ml: 2}}>
                             <SettingsIcon fontSize="medium"/>
                         </OutlinedIconButton>
 

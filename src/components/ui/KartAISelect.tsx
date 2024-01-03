@@ -12,10 +12,42 @@ interface KartAISelectProps {
     fullWidth?: boolean
     disabled?: boolean
     sx?: SxProps<Theme>
+    mt?: number
+    mb?: number
+    ml?: number
+    mr?: number
+    size?: "small" | "medium"
 }
 
 export default function (props: KartAISelectProps) {
-    return <FormControl sx={props.sx} fullWidth={props.fullWidth}>
+
+
+    const getSx = () => {
+        let sx: SxProps<Theme> = {
+            ...(props.sx ?? {})
+        }
+
+        if (props.mt) {
+            sx = {...sx, mt: props.mt}
+        }
+        if (props.mb) {
+            sx = {...sx, mb: props.mb}
+        }
+        if (props.ml) {
+            sx = {...sx, ml: props.ml}
+        }
+        if (props.mr) {
+            sx = {...sx, mr: props.mr}
+        }
+
+        if (props.fullWidth) {
+            sx = {...sx, width: "100%"}
+        }
+
+        return sx
+    }
+
+    return <FormControl size={props.size} sx={getSx()} fullWidth={props.fullWidth}>
         {props.label && <InputLabel>{props.label}</InputLabel>}
         <Select disabled={props.disabled}
                 fullWidth={props.fullWidth}

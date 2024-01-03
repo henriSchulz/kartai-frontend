@@ -29,7 +29,7 @@ interface BuildRequestOptions {
 }
 
 export default class RequestBuilder {
-    private static requestInterval: number = 200;
+    public static requestInterval: number = 100;
     private static lastRequestTime: number = 0;
 
     static async wait(ms: number): Promise<void> {
@@ -39,12 +39,17 @@ export default class RequestBuilder {
     }
 
     static async sendRequest<T>(options: BuildRequestOptions): Promise<Response<T>> {
+        const headers = {
+            ...(options.headers ?? {}),
+            "Authorization": `Bearer ${options.token ?? ""}`
+        };
+
         try {
             this.lastRequestTime = Date.now()
             const response = await axios.request({
                 method: options.method ?? "GET",
                 url: options.url,
-                headers: options.headers ?? {},
+                headers: headers,
                 data: options.body,
                 validateStatus: (status) => status < 500
             })

@@ -1,3 +1,3 @@
-type Language = "de" | "en"
+type Language = "de"
 
 export default Language
