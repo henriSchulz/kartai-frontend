@@ -21,7 +21,7 @@ export const cardHeight = {
     lg: calcHeight(cardWidth.lg),
     md: calcHeight(cardWidth.md),
     sm: calcHeight(cardWidth.sm),
-    xs: window.innerHeight - 70
+    xs: window.innerHeight - 30
 }
 
 export const cardContentHeightCorrection = 140
@@ -31,7 +31,7 @@ export const cardContentHeight = {
     lg: cardHeight.lg - cardContentHeightCorrection,
     md: cardHeight.md - cardContentHeightCorrection,
     sm: cardHeight.sm - cardContentHeightCorrection,
-    xs: window.innerHeight - 70 - cardContentHeightCorrection
+    xs: window.innerHeight - 80 - cardContentHeightCorrection
 }
 
 export const cardsRemainingNum = {
@@ -40,15 +40,14 @@ export const cardsRemainingNum = {
 }
 
 export const cardStyles: SxProps<Theme> = {
-    mt: {xl: 5, lg: 3, md: 2, sm: 2, xs: 2},
-    p: 5,
+    mt: {xl: 5, lg: 3, md: 2, sm: 2, xs: 0.5},
+    p: {md: 5, xs: 3},
     width: cardWidth,
     height: cardHeight,
     overflow: "hidden",
     '@media (max-width: 575px)': {
         boxShadow: 'none',
         border: "none",
-        marginTop: 1
     },
 };
 

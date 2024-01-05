@@ -6,7 +6,7 @@ import {Settings} from "../../Settings";
 const {LANGUAGE} = Settings
 
 
-const LANGUAGE_DATA = {
+export const LANGUAGE_DATA = {
     de,
 }
 

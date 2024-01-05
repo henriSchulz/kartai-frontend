@@ -5,11 +5,15 @@ export const bodyBackground: SxProps = {
 }
 
 export const firstSection: SxProps = {
-    background: "radial-gradient(rgba(33,143,130,0.36320465686274506) 5%, rgba(255,255,255,1) 80%)",
+    background: "linear-gradient(0deg, rgba(33,143,130,0.36320465686274506) 5%, rgba(255,255,255,1) 80%)",
     p: 4,
-    height: "100vh",
+    pb: 40,
+    width: "100%",
     borderBottomLeftRadius: "15px",
     borderBottomRightRadius: "15px",
+    "@media (max-width: 600px)": {
+        pb: 20,
+    },
 }
 
 
@@ -17,6 +21,12 @@ export const headline1: SxProps = {
     fontSize: 75,
     fontWeight: 900,
     mb: -2,
+    "@media (max-width: 600px)": {
+        overflow: "hidden",
+        wordBreak: "keep-all",
+        fontSize: 50,
+        mb: 1,
+    },
 }
 
 
@@ -25,6 +35,10 @@ export const headline2: SxProps = {
     color: "#79797A",
     my: 5,
     overflow: "hidden",
+    "@media (max-width: 600px)": {
+        fontSize: 25,
+        textAlign: "block"
+    },
 }
 
 export const headline3: SxProps = {

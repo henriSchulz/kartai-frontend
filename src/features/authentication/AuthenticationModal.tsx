@@ -10,6 +10,7 @@ import {Icons} from "../../asserts/asserts";
 import KartAITextField from "../../components/ui/KartAITextField";
 import KartAIBox from "../../components/ui/KartAIBox";
 import {Settings} from "../../Settings";
+import GoogleLoginButton from "./components/GoogleLoginButton";
 
 
 interface AuthenticationModalProps {
@@ -25,6 +26,7 @@ export default function ({controller}: AuthenticationModalProps) {
 
     return <KartAIBox>
         <KartAIModal
+            onClose={controller.close}
             loading={controller.states.loadingState.val}
             show={controller.states.showState.val}
             title={isSigningUp ? StaticText.SIGN_UP : StaticText.SIGN_IN}
@@ -34,22 +36,7 @@ export default function ({controller}: AuthenticationModalProps) {
         >
             <KartAIBox>
                 {isSigningUp && <>
-                    <KartAIButton variant="outlined"
-                                  disabled={controller.states.loadingState.val}
-                                  fullWidth
-                                  onClick={controller.onSignInWithGoogle}>
-                        <div style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            marginRight: "5px"
-                        }}>
-                            <img alt="Google Logo" style={{height: 40, width: 40, marginRight: "10px"}}
-                                 src={Icons.GOOGLE}/>
-                            <span
-                                className="font-medium">{StaticText.CONTINUE_WITH_GOOGLE}</span>
-                        </div>
-                    </KartAIButton>
+                    <GoogleLoginButton onClick={controller.onSignInWithGoogle} loading={controller.states.loadingState.val} />
 
                     <Typography sx={{textAlign: "center", my: 2}}>{StaticText.OR}</Typography>
 
@@ -101,24 +88,7 @@ export default function ({controller}: AuthenticationModalProps) {
                 </>}
 
                 {!isSigningUp && <>
-                    <KartAIButton variant="outlined"
-                                  disabled={controller.states.loadingState.val}
-                                  fullWidth
-                                  onClick={controller.onSignInWithGoogle}>
-                        <div style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            marginRight: "5px"
-                        }}>
-                            <img alt="Google Logo" style={{height: 40, width: 40, marginRight: "10px"}}
-                                 src={Icons.GOOGLE}/>
-                            <span
-                                className="font-medium">{StaticText.CONTINUE_WITH_GOOGLE}</span>
-
-
-                        </div>
-                    </KartAIButton>
+                    <GoogleLoginButton onClick={controller.onSignInWithGoogle} loading={controller.states.loadingState.val} />
 
                     <Typography sx={{textAlign: "center", my: 2}}>{StaticText.OR}</Typography>
 

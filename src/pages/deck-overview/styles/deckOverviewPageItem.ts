@@ -16,7 +16,7 @@ export const deckOverviewItemTitle: SxProps<Theme> = {
     whiteSpace: "nowrap",
     textOverflow: "ellipsis",
     display: "inline-block",
-    maxWidth: {lg: 550, xl: 550, md: 550, sm: 400, xs: 200}
+    maxWidth: {lg: 550, xl: 550, md: 550, sm: 400, xs: 300  }
 }
 
 export const deckOverviewItemTitleButton: SxProps<Theme> = {
@@ -29,7 +29,7 @@ export const deckOverviewItemTitleButton: SxProps<Theme> = {
 export function deckOverviewCardsCount(cardLevel: "new" | "learning" | "review", noCards: boolean): SxProps<Theme> {
     const basic: SxProps<Theme> = {
         fontSize: 20,
-        m: 1,
+        m: {sm: 1},
     }
 
     if (noCards) {

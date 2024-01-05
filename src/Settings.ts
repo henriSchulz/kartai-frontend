@@ -1,11 +1,24 @@
 import Language from "./types/Language";
 import {LocalStorageKeys} from "./data/LocalStorageKeys";
 
+
+const LANGUAGES: Language[] = ["de"]
+
+
 export class Settings {
+
+    private static getLanguage(): Language {
+        const language = localStorage.getItem(LocalStorageKeys.LANGUAGE) ?? "de"
+
+        if (Object.keys(LANGUAGES).includes(language)) return language as Language
+
+        return "de"
+    }
+
     public static PRODUCTION = process.env.REACT_APP_NODE_ENV === "production"
     public static ALLOWS_COOKIES = Boolean(Number(localStorage.getItem(LocalStorageKeys.ALLOWS_COOKIES)))
     public static API_HOST = this?.PRODUCTION ? "https://api.kartai.de" : "http://localhost:4000"
-    public static LANGUAGE: Language = (localStorage.getItem(LocalStorageKeys.LANGUAGE) ?? "de") as Language
+    public static LANGUAGE: Language = this.getLanguage()
     public static REDUCE_ANIMATIONS = false
     public static CARD_FLIP_TRANSITION_DURATION = 350
     public static OPENAI_KEY = localStorage.getItem(LocalStorageKeys.OPENAI_KEY) ?? ""

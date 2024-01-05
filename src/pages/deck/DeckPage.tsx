@@ -17,7 +17,7 @@ import {StaticText} from "../../data/text/staticText";
 import CardUtils from "../../utils/CardUtils";
 import {deckFinishedText, deckPageCardsCount, deckPageStudyButton} from "./styles/deckPapeStyles";
 import KartAIButton from "../../components/ui/KartAIButton";
-import {isXsWindow} from "../../utils/general";
+import {isXsWindow, windowWidthGreaterThan, windowWidthLessThan} from "../../utils/general";
 
 
 export default function () {
@@ -83,9 +83,9 @@ export default function () {
         onClick: () => navigate(`/cards/${deckId}`)
     }
 
-    const nextDueCard = useMemo(() => {
-        return CardUtils.getInstance().getNextDueCard(deckId!)
-    }, [deckId])
+    // const nextDueCard = useMemo(() => {
+    //     return CardUtils.getInstance().getNextDueCard(deckId!)
+    // }, [deckId])
 
 
     return <KartAIBox>
@@ -100,7 +100,8 @@ export default function () {
                     />
                     <Divider/>
                     <KartAIBox gridCenter>
-                        <KartAIBox hide={!cardsAvailable} mt={10} flexCenter>
+                        <KartAIBox hide={!cardsAvailable} mt={10} gridCenter={windowWidthLessThan("md")}
+                                   flexCenter={windowWidthGreaterThan("sm")}>
                             <KartAIBox gridStart sx={{gridTemplateColumns: "auto auto"}}>
                                 <Typography sx={mediumBoldText}>{StaticText.NEW}</Typography>
                                 <Typography sx={deckPageCardsCount("new", !loading)}>{cardsInfo.newCards}</Typography>
@@ -119,7 +120,7 @@ export default function () {
                                 sx={deckPageStudyButton}
                                 disabled={!initDone}
                                 onClick={() => navigate(`/study/${deckId}`)}
-                            >{!isXsWindow() ? StaticText.LEARN_DECK : StaticText.LEARN}</KartAIButton>
+                            >{StaticText.LEARN_DECK}</KartAIButton>
                         </KartAIBox>
 
                         <KartAIBox gridCenter sx={{textAlign: "center"}} hide={cardsAvailable || !initDone} mt={10}>

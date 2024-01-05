@@ -229,23 +229,28 @@ export default function (props: StudyCardsPage) {
                             </KartAIButton>
                         </KartAIBox>
 
-                        <KartAIBox spacing={1} fullWidth flexCenter hide={backHidden || customStudy}>
-                            <KartAIButton color="secondary" fullWidth onClick={() => controller.flipToFront(0)}
-                                          variant="contained">
-                                {StaticText.AGAIN}
-                            </KartAIButton>
-                            <KartAIButton color="secondary" fullWidth onClick={() => controller.flipToFront(1)}
-                                          variant="contained">
-                                {StaticText.HARD} {!isXsWindow() && `(${durationString.hard})`}
-                            </KartAIButton>
-                            <KartAIButton color="secondary" fullWidth onClick={() => controller.flipToFront(2)}
-                                          variant="contained">
-                                {StaticText.GOOD} {!isXsWindow() && `(${durationString.good})`}
-                            </KartAIButton>
-                            <KartAIButton color="secondary" fullWidth onClick={() => controller.flipToFront(3)}
-                                          variant="contained">
-                                {StaticText.EASY} {!isXsWindow() && `(${durationString.easy})`}
-                            </KartAIButton>
+                        <KartAIBox spacing={1} fullWidth gridCenter={isXsWindow()} flexCenter={!isXsWindow()}
+                                   hide={backHidden || customStudy}>
+                            <KartAIBox spacing={isXsWindow() ? 2 : 1} flexCenter fullWidth>
+                                <KartAIButton color="secondary" fullWidth onClick={() => controller.flipToFront(0)}
+                                              variant="contained">
+                                    {StaticText.AGAIN}
+                                </KartAIButton>
+                                <KartAIButton color="secondary" fullWidth onClick={() => controller.flipToFront(1)}
+                                              variant="contained">
+                                    {StaticText.HARD} ({durationString.hard})
+                                </KartAIButton>
+                            </KartAIBox>
+                            <KartAIBox spacing={isXsWindow() ? 2 : 1} flexCenter fullWidth>
+                                <KartAIButton color="secondary" fullWidth onClick={() => controller.flipToFront(2)}
+                                              variant="contained">
+                                    {StaticText.GOOD} ({durationString.good})
+                                </KartAIButton>
+                                <KartAIButton color="secondary" fullWidth onClick={() => controller.flipToFront(3)}
+                                              variant="contained">
+                                    {StaticText.EASY} ({durationString.easy})
+                                </KartAIButton>
+                            </KartAIBox>
                         </KartAIBox>
 
                         <KartAIBox fullWidth spacing={1} flexCenter hide={backHidden || !customStudy}>

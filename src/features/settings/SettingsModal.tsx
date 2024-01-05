@@ -184,6 +184,7 @@ export default function ({controller}: SettingsModalProps) {
                 <Button startIcon={<Logout/>} fullWidth variant="contained"
                         onClick={() => AuthenticationService.signOut()}>{StaticText.SIGN_OUT}</Button>
             </KartAIBox>}
+
         </KartAIModal>
     </KartAIBox>
 }

@@ -93,23 +93,15 @@ export default function (props: KartAIModalProps) {
                    transitionDuration={props.transitionDuration ?? 250}
     >
 
-        <Typography sx={{fontWeight: 550, p: 2, fontSize: "1.5rem"}}>
-            {props.title}
-        </Typography>
+        <KartAIBox flexSpaceBetween>
+            <Typography sx={{fontWeight: 550, p: 2, fontSize: "1.5rem"}}>
+                {props.title}
+            </Typography>
 
-        <IconButton
-            aria-label="close"
-            disabled={props.loading}
-            onClick={props.notCancelable ? () => "" : props.onClose}
-            sx={{
-                // position: 'absolute',
-                right: 8,
-                top: 8,
-                color: (theme) => theme.palette.grey[500],
-            }}
-        >
-
-        </IconButton>
+            <IconButton sx={{m: 2}} onClick={props.onClose}>
+                <CloseIcon/>
+            </IconButton>
+        </KartAIBox>
         <DialogContent dividers>
             {props.children}
         </DialogContent>

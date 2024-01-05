@@ -4,7 +4,7 @@ import React from "react";
 import {Button, Tooltip, Typography} from "@mui/material";
 import {Folder, Notes, Tune} from "@mui/icons-material";
 import {DeckOrDirectory} from "../../../types/DeckOrDirectory";
-import {getWindowWidth} from "../../../utils/general";
+import {getWindowWidth, isXsWindow, windowWidthGreaterThan} from "../../../utils/general";
 import CardUtils from "../../../utils/CardUtils";
 import {StaticText} from "../../../data/text/staticText";
 import OutlinedIconButton from "../../../components/OutlinedIconButton";
@@ -67,7 +67,14 @@ function DeckOverviewItem(props: DeckListItemProps) {
         } else {
             if (CardUtils.getInstance().getCardsByDeckId(props.deckOrDir.id).length === 0) {
                 navigate(`/cards/${props.deckOrDir.id}`)
-            } else navigate(`/deck/${props.deckOrDir.id}`)
+            } else {
+
+                if (isXsWindow()) {
+                    navigate(`/study/${props.deckOrDir.id}`)
+                } else {
+                    navigate(` / deck /${props.deckOrDir.id}`)
+                }
+            }
         }
     }, [props.deckOrDir])
 
@@ -138,7 +145,7 @@ function DeckOverviewItem(props: DeckListItemProps) {
                 </Button>
 
                 <KartAIBox flexCenter>
-                    <KartAIBox flexCenter sx={{
+                    <KartAIBox hideIfXs flexCenter sx={{
                         display: {
                             xs: "none"
                         }, mx: 2
@@ -159,7 +166,21 @@ function DeckOverviewItem(props: DeckListItemProps) {
                             >{cardsInfo.reviewCards}</Typography>
                         </Tooltip>
                     </KartAIBox>
-                    <KartAIBox sx={{display: "inline-block"}}>
+
+                    <KartAIBox hide={windowWidthGreaterThan("xs")} flexCenter sx={{
+                        display: {
+                            xs: "none"
+                        }, mx: 2
+                    }}>
+                        <Tooltip title={StaticText.CARDS}>
+                            <Typography
+                                sx={deckOverviewCardsCount("review", !cardsAvailable())}
+                            >{cardsInfo.reviewCards + cardsInfo.learningCards + cardsInfo.newCards}</Typography>
+                        </Tooltip>
+                    </KartAIBox>
+
+
+                    <KartAIBox hideIfXs sx={{display: "inline-block"}}>
                         <OutlinedIconButton onClick={event => setAnchorEl(event.currentTarget)}>
                             <Tune/>
                         </OutlinedIconButton>

@@ -18,6 +18,7 @@ import {
 } from "./styles/launchPageStyles";
 import Icon8 from "../../components/Icon8";
 import {Settings} from "../../Settings";
+import {windowWidthGreaterThan, windowWidthLessThan} from "../../utils/general";
 
 
 interface LaunchPageProps {
@@ -54,9 +55,11 @@ export default function ({onClickGettingStarted}: LaunchPageProps) {
         <TopProgressbar show={!topLevelInitDone}/>
         <PageTransitionWrapper>
             <KartAIBox>
-                <KartAIBox sx={firstSection}>
-                    <KartAIBox gridCenter mt={6} sx={{width: "70%", mx: "auto"}}>
-                        <KartAIBox spacing={3} flexCenter>
+                <KartAIBox fullWidth sx={firstSection}>
+                    <KartAIBox gridCenter mt={6} sx={{width: {md: "70%", sm: "90%"}, mx: "auto"}}>
+                        <KartAIBox
+                            gridCenter={windowWidthLessThan("md")}
+                            flexCenter={windowWidthGreaterThan("sm")} spacing={3}>
 
                             <img src={Icons.KARTAI} alt="kartai-logo" width="200px" height="200px"/>
 
@@ -75,13 +78,13 @@ export default function ({onClickGettingStarted}: LaunchPageProps) {
                             <Typography sx={headline2}>{StaticText.SUB_SLOGAN}</Typography>
                         </KartAIBox>
 
-                        <KartAIButton disabled={!topLevelInitDone} sx={gettingStartedButton} variant="contained" color="primary"
+                        <KartAIButton disabled={!topLevelInitDone} sx={gettingStartedButton} variant="contained"
+                                      color="primary"
                                       onClick={onClickGettingStarted}>
                             {StaticText.GETTING_STARTED}
                         </KartAIButton>
 
                     </KartAIBox>
-
                 </KartAIBox>
                 <KartAIBox mt={3} mb={10} fullWidth gridCenter>
                     <Typography sx={headline3}>{StaticText.FEATURES}</Typography>
@@ -148,21 +151,20 @@ export default function ({onClickGettingStarted}: LaunchPageProps) {
                     </KartAIBox>
 
                     <KartAIBox flexSpaceBetween mt={1}>
-                        <Typography sx={allRightsReservedText}> © 2024 KartAI. {StaticText.ALL_RIGHTS_RESERVED}</Typography>
+                        <Typography sx={allRightsReservedText}> © 2024
+                            KartAI. {StaticText.ALL_RIGHTS_RESERVED}</Typography>
 
                         <Typography sx={allRightsReservedText}>
                             {StaticText.ICONS_BY}: <a href="https://icons8.com" target="_blank" rel="noreferrer">
-                                Icons8
-                            </a>, <a href="https://fonts.google.com/icons" target="_blank" rel="noreferrer">
-                                Google Fonts
-                            </a>
+                            Icons8
+                        </a>, <a href="https://fonts.google.com/icons" target="_blank" rel="noreferrer">
+                            Google Fonts
+                        </a>
 
 
                         </Typography>
                     </KartAIBox>
                 </KartAIBox>
-
-
 
 
             </KartAIBox>

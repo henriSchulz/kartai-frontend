@@ -37,10 +37,11 @@ export function deckPageCardsCount(cardLevel: "new" | "learning" | "review", noC
 
 export const deckPageStudyButton = {
     ml: {
-        xl: 10, lg: 10, md: 10, sm: 5, xs: 2
+        xl: 10, lg: 10, md: 10
     },
     alignSelf: "center",
-    fontSize: 23
+    fontSize: 23,
+    mt: {sm: 3, xs: 3}
 }
 
 export const deckFinishedText = {

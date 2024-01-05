@@ -84,7 +84,7 @@ const GERMAN: StaticTextKeys = {
     CORRECT: "Richtig",
     COULD_NOT_PARSE_CSV: "In dieser CSV konten keine Daten gelesen werden. Bitte überprüfe der Format der Datei.",
     CRAFT_DOCUMENT_LINK: "Craft Dokumenten Link",
-    CRAFT_IMPORT_FAILED: "Das Importieren der Tabelle ist fehlgeschlagen. (Siehe unter https://kartai.de/help für mehr Informationen)",
+    CRAFT_IMPORT_FAILED: "Das Importieren der Tabelle ist fehlgeschlagen.",
     CRAFT_TABLE: "Craft Tabelle",
     CREATE_DECK: "Stapel erstellen",
     CSV_DELIMITER: "CSV-Separator",
