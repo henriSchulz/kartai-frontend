@@ -19,8 +19,9 @@ import {
 import {useNavigate} from "react-router-dom";
 import DeckOverviewController from "../DeckOverviewController";
 import ImportCSVController from "../features/import-csv/ImportCSVController";
-import ImportCraftTableController from "../features/import-craft-table/ImportCraftTableController";
+import ImportMarkdownTableController from "../features/import-markdown-table/ImportMarkdownTableController";
 import {useGlobalContext} from "../../../App";
+import DeckOverviewItemContextMenu from "./DeckOverviewItemContextMenu";
 
 
 interface DeckListItemProps {
@@ -36,7 +37,7 @@ interface DeckListItemProps {
         onShare(): void
     },
     importCsvController: ImportCSVController
-    importCraftTableController: ImportCraftTableController
+    importCraftTableController: ImportMarkdownTableController
 }
 
 
@@ -44,6 +45,8 @@ function DeckOverviewItem(props: DeckListItemProps) {
     const navigate = useNavigate()
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+    const [contextMenuPosition, setContextMenuPosition] = React.useState<{ x: number, y: number } | undefined>(undefined)
 
     const {cardTypesController} = useGlobalContext()
 
@@ -68,11 +71,10 @@ function DeckOverviewItem(props: DeckListItemProps) {
             if (CardUtils.getInstance().getCardsByDeckId(props.deckOrDir.id).length === 0) {
                 navigate(`/cards/${props.deckOrDir.id}`)
             } else {
-
                 if (isXsWindow()) {
                     navigate(`/study/${props.deckOrDir.id}`)
                 } else {
-                    navigate(` / deck /${props.deckOrDir.id}`)
+                    navigate(`/deck/${props.deckOrDir.id}`)
                 }
             }
         }
@@ -84,7 +86,9 @@ function DeckOverviewItem(props: DeckListItemProps) {
     }
 
     function handleContextMenu(event: React.MouseEvent<HTMLDivElement>) {
-        controller.onOpenContextMenu(event)
+        event.preventDefault()
+        const {pageX, pageY} = event
+        setContextMenuPosition({x: pageX, y: pageY})
         controller.selectTempDeckOrDirectory(props.deckOrDir)
     }
 
@@ -111,29 +115,41 @@ function DeckOverviewItem(props: DeckListItemProps) {
         }
     }
 
+    const menuFunctions = {
+        onRename: props.actions.onRename,
+        onDelete: props.actions.onDelete,
+        onExport: props.actions.onExport,
+        onInfo: props.actions.onInfo,
+        onMove: props.actions.onMove,
+        onShare: props.actions.onShare,
+    }
+
 
     return (<KartAIBox id={"row-" + props.deckOrDir.id}>
-            {anchorEl && <DeckOverviewItemMenu
+            <DeckOverviewItemMenu
                 onClose={() => setAnchorEl(null)}
                 anchorEl={anchorEl}
                 entitiesSelected={controller.entitiesSelected()}
                 isShared={Boolean(props.deckOrDir.isShared)}
-                menuFunctions={{
-                    onRename: props.actions.onRename,
-                    onDelete: props.actions.onDelete,
-                    onExport: props.actions.onExport,
-                    onInfo: props.actions.onInfo,
-                    onMove: props.actions.onMove,
-                    onShare: props.actions.onShare,
-                }}
-            />}
+                menuFunctions={menuFunctions}
+            />
+
+
+            <DeckOverviewItemContextMenu position={contextMenuPosition}
+                                         entitiesSelected={controller.entitiesSelected()}
+                                         isShared={Boolean(props.deckOrDir.isShared)}
+                                         onClose={() => setContextMenuPosition(undefined)}
+                                         menuFunctions={menuFunctions}
+            />
+
 
             <KartAIBox
                 flexSpaceBetween
                 sx={row(Boolean(props.selected))}
                 onClick={handleClickRow}
                 onContextMenu={handleContextMenu}
-                onDoubleClick={openDeckOrDir}>
+                //onDoubleClick={openDeckOrDir}
+            >
 
                 <Button sx={deckOverviewItemTitleButton} startIcon={
                     props.deckOrDir.isDirectory ? <Folder fontSize="medium"/> : <Notes fontSize="medium"/>

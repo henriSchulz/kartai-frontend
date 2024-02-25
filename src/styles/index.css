@@ -1,6 +1,5 @@
 body {
-    background-color: #FAFBFC;
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    font: 400 16px 'Varela Round', sans-serif;
     user-select: none;
     overflow-x: hidden;
 }
@@ -70,6 +69,11 @@ button {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
+
+.card-image-size {
+    max-height: 400px;
+}
+
 
 
 

@@ -4,7 +4,7 @@ import DeckOverviewController from "../../DeckOverviewController";
 import {LocalStorageKeys} from "../../../../data/LocalStorageKeys";
 import DeckUtils from "../../../../utils/DeckUtils";
 import CardTypeUtils from "../../../../utils/CardTypeUtils";
-import {generateModelId, getTextFieldValue} from "../../../../utils/general";
+import {generateModelId, getCheckBoxValue, getTextFieldValue, markdownToCsv} from "../../../../utils/general";
 import {StaticText} from "../../../../data/text/staticText";
 import CraftImportService from "../../../../services/CraftImportService";
 import NewDeckOrDirectoryController from "../new-deck-or-directory/NewDeckOrDirectoryController";
@@ -32,7 +32,7 @@ interface ImportCraftTableControllerOptions extends ModalControllerOptions {
 }
 
 
-export default class ImportCraftTableController extends ModalController<ImportCraftTableControllerOptions> {
+export default class ImportMarkdownTableController extends ModalController<ImportCraftTableControllerOptions> {
 
     public deckOverviewController: DeckOverviewController
 
@@ -189,38 +189,40 @@ export default class ImportCraftTableController extends ModalController<ImportCr
     }
 
 
-    public onParseCraftTable = async () => {
-        const craftUrl = getTextFieldValue("craft-url")!
-        const numOfRows = parseInt(getTextFieldValue("num-of-rows")!)
+    public onParseMarkdownTable = async () => {
+        const markdownText = getTextFieldValue("markdown-text")!
 
-        if (craftUrl.length === 0 || craftUrl.replaceAll(" ", "").length === 0) {
+
+        if (markdownText.length === 0 || markdownText.replaceAll(" ", "").length === 0) {
             return this.snackbar(StaticText.FIELD_EMPTY, 6000, "error")
         }
 
-        if (numOfRows < 2) {
-            return this.snackbar(StaticText.NUM_OF_COLUMNS_TOO_SMALL, 6000, "error")
-        }
-
-        if (numOfRows > 6) {
-            return this.snackbar(StaticText.NUM_OF_COLUMNS_TOO_BIG, 6000, "error")
-        }
 
         this.states.loadingState.set(true)
-        const table = await CraftImportService.importCraftTable(craftUrl, numOfRows)
 
-        if (!table) {
+        const hasHeader = getCheckBoxValue("table-head")
+
+        try {
+            const table = markdownToCsv(markdownText, {hasHeader})
+
+
+            if (!table || table.length === 0) {
+                this.states.loadingState.set(false)
+                return this.snackbar(StaticText.MARKDOWN_IMPORT_FAILED, 6000, "error")
+            }
+
+            this.snackbar(StaticText.CSV_SUCCESSFULLY_PARSED.replaceAll("{items}", table.length.toString()), 2000, "success")
+
+            this.states.parsedCraftTableState.set(table)
+
+            this.setDefaultSelectedCardType()
+            this.setDefaultSelectedDeck()
             this.states.loadingState.set(false)
-            return this.snackbar(StaticText.CRAFT_IMPORT_FAILED, 6000, "error")
+            this.states.activeCsvImportStepState.set(1)
+        } catch (e) {
+            this.states.loadingState.set(false)
+            this.snackbar(StaticText.MARKDOWN_IMPORT_FAILED, 6000, "error")
         }
-
-        this.snackbar(StaticText.CSV_SUCCESSFULLY_PARSED.replaceAll("{items}", table.length.toString()), 2000, "success")
-
-        this.states.parsedCraftTableState.set(table)
-
-        this.setDefaultSelectedCardType()
-        this.setDefaultSelectedDeck()
-        this.states.loadingState.set(false)
-        this.states.activeCsvImportStepState.set(1)
     }
 
 }

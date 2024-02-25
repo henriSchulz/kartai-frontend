@@ -2,7 +2,7 @@
 import Google from "./Google_Logo.png"
 
 //@ts-ignore
-import KartAI from "./icon.png"
+import KartAI from "./icon-192x192.png"
 
 //@ts-ignore
 import Craft from "./craft_icon.png"
@@ -17,9 +17,6 @@ export class Icons {
     public static KARTAI = KartAI
 
     public static CRAFT = Craft
-
-    public static COMPUTER = Computer
-
 
     public static getIcon8(category: string, name: string, size: number = 94) {
         return `https://img.icons8.com/${category}/${size}/${name}`

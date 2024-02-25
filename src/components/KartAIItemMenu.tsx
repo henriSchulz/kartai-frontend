@@ -25,6 +25,7 @@ interface ItemMenuProps {
 
 
 export default function (props: ItemMenuProps) {
+    if (!props.show) return <></>
 
     return (
         <Menu
@@ -37,7 +38,7 @@ export default function (props: ItemMenuProps) {
             <MenuList>
                 {props.menuItems.map((item, index) => {
                     if (item.hidden) {
-                        return <div key={index*Math.random()}></div>
+                        return <div key={index * Math.random()}></div>
                     }
 
                     return <div key={index}>

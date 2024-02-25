@@ -60,6 +60,8 @@ export default class AppController {
         this.states = options.states
         this.navigate = options.navigate
         this.path = options.path
+
+        console.log(Settings.IS_ELECTRON)
     }
 
 
@@ -79,6 +81,7 @@ export default class AppController {
     }
 
     async init() {
+
         try {
 
 
@@ -86,6 +89,10 @@ export default class AppController {
 
             this.states.syncProgressState.set(1)
             if (isAuth) {
+                if (Settings.IS_ELECTRON) {
+                    this.navigate("/deck-overview")
+                }
+
                 const request = RequestBuilder.buildRequest({
                     url: `${Settings.API_HOST}/all`,
                     method: "GET",
@@ -130,8 +137,7 @@ export default class AppController {
                 }
             }
 
-
-            if (!Settings.ALLOWS_COOKIES) {
+            if (!Settings.ALLOWS_COOKIES && !Settings.IS_ELECTRON) {
                 this.states.showCookieConsentState.set(true)
             }
 
@@ -165,6 +171,7 @@ export default class AppController {
     }
 
     public showSidebar(path: string): boolean {
+        if (Settings.IS_ELECTRON) return false
         if (path === "/") return false
         if (!AuthenticationService.current) return false
 
@@ -186,6 +193,12 @@ export default class AppController {
     public onAllowCookies = () => {
         localStorage.setItem(LocalStorageKeys.ALLOWS_COOKIES, String(1))
         window.location.reload()
+    }
+
+
+    public navigateToLaunchPage = () => {
+        if (Settings.IS_ELECTRON) return
+        this.navigate("/")
     }
 
 

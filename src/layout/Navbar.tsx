@@ -18,6 +18,7 @@ import {useGlobalContext} from "../App";
 import {Settings as SettingsIcon} from "@mui/icons-material"
 import AppController from "../AppController";
 import AuthenticationService from "../services/AuthenticationService";
+import {Settings} from "../Settings";
 
 
 interface NavbarProps {
@@ -40,73 +41,17 @@ export default function (props: NavbarProps) {
 
     const {topLevelInitDone} = useGlobalContext()
 
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
-        React.useState<null | HTMLElement>(null);
-
-    const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-
     const navigate = useNavigate()
 
+    const showKartAIWeb = (location.pathname === "/" ||
+        (location.pathname.startsWith("/public-deck/") && !AuthenticationService.current)) && !Settings.IS_ELECTRON
 
-    const handleMobileMenuClose = () => {
-        setMobileMoreAnchorEl(null);
-    };
-
-
-    const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-        setMobileMoreAnchorEl(event.currentTarget);
-    };
-
-    const showKartAIWeb = location.pathname === "/" ||
-        (location.pathname.startsWith("/public-deck/") && !AuthenticationService.current)
-
-    const menu = [
-        {
-            icon: <Inventory2 fontSize="medium"/>, text: StaticText.CARD_TYPES, onClick() {
-                props.onOpenCardTypes()
-            }
-        },
-        {
-            icon: <SettingsIcon fontSize="medium"/>, text: StaticText.SETTINGS, onClick() {
-                props.onOpenSettings()
-            }
-        }
-    ].slice(!props.appController.showCardTypesOption(location.pathname) ? 1 : 0)
-
-
-    const renderMobileMenu = (
-        <Menu
-            anchorEl={mobileMoreAnchorEl}
-            anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-            }}
-            keepMounted
-            open={isMobileMenuOpen}
-            onClose={handleMobileMenuClose}
-        >
-            {menu.map((item, index) => {
-                return <MenuItem onClick={() => {
-                    item.onClick()
-                    handleMobileMenuClose()
-                }} key={index}>
-                    <OutlinedIconButton
-                        sx={{width: "100%", display: "flex", alignItems: "center", justifyContent: "flex-start"}}>
-                        {item.icon}
-                        <Typography sx={{ml: 2}}> {item.text}</Typography>
-                    </OutlinedIconButton>
-
-                </MenuItem>
-            })}
-        </Menu>
-    );
 
     return (
         <KartAIBox sx={{flexGrow: 1, width: "100%"}}>
             <AppBar sx={{...props.sx, zIndex: theme.zIndex.drawer + 1}} position="fixed">
                 <Toolbar>
-                    <KartAIBox onClick={() => navigate("/")}
+                    <KartAIBox onClick={props.appController.navigateToLaunchPage}
                                sx={{display: "flex", alignItems: "center", gap: 1, cursor: "pointer"}}>
                         <img height={30} width={30} src={Icons.KARTAI}/>
 
@@ -129,7 +74,7 @@ export default function (props: NavbarProps) {
 
                     </KartAIBox>
                     <KartAIBox sx={{flexGrow: 1}}/>
-                    <KartAIBox sx={{display: {xs: 'none', md: 'flex'}}}>
+                    <KartAIBox sx={{display: "flex"}}>
                         {
                             props.appController.showCardTypesOption(location.pathname) &&
                             <OutlinedIconButton disabled={!topLevelInitDone} onClick={props.onOpenCardTypes}>
@@ -151,14 +96,8 @@ export default function (props: NavbarProps) {
 
 
                     </KartAIBox>
-                    {menu.length > 0 && <KartAIBox sx={{display: {xs: 'flex', md: 'none'}}}>
-                        <OutlinedIconButton onClick={handleMobileMenuOpen}>
-                            <MenuIcon/>
-                        </OutlinedIconButton>
-                    </KartAIBox>}
                 </Toolbar>
             </AppBar>
-            {menu.length > 0 && renderMobileMenu}
 
             <Toolbar/>
 

@@ -55,6 +55,14 @@ export const gettingStartedButton: SxProps = {
     background: "linear-gradient(90deg, rgba(33,143,130,1) 35%, rgba(33,101,143,1) 100%)"
 }
 
+export const downloadButton: SxProps = {
+    fontSize: 25,
+    fontWeight: 550,
+    background: "linear-gradient(180deg, rgba(33,143,130,1) 35%, rgba(33,101,143,1) 100%)",
+    px: 3,
+    py: -1,
+}
+
 export const featureBox: SxProps = {
     borderRadius: "15px",
     width: {md: 380, xs: 380, sm: 200},
@@ -85,3 +93,21 @@ export const privacyPolicyText: SxProps = {
 export const footer: SxProps = {
     mx: 2
 }
+
+export const downloadBox: SxProps = {
+    borderRadius: "15px",
+    width: {md: 570, xs: 380, sm: 380},
+    backgroundColor: "#FFFFFF",
+    py: 2,
+    px: 4
+}
+
+export const downloadLabel: SxProps = {
+    fontSize: 25,
+    fontWeight: 600,
+}
+
+export const signInBox: SxProps = {
+    maxWidth: 500
+}
+

@@ -8,12 +8,13 @@ export const listViewWidth = {md: 800, sm: 700, xs: 390}
 export const listViewHeight = {md: 550, sm: 450, xs: window.innerHeight-100}
 
 export const listView: SxProps<Theme> = {
-    borderRadius: "8px",
+    borderRadius: "12px",
     outline: "10px solid transparent",
     border: "1px solid",
     borderColor: {xs: "white", md: lightBorderColor},
     width: listViewWidth,
     height: listViewHeight,
+    background: "#fff",
     overflowY: "scroll",
     overflowX: "hidden",
     p: 5,

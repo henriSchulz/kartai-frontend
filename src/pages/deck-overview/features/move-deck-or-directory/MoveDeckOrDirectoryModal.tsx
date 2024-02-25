@@ -22,6 +22,8 @@ export default function ({controller}: MoveDeckOrDirectoryModalProps) {
     React.useEffect(() => {
         if (!controller.states.showState.val) return
 
+        console.log("Call")
+
         const destinationDirs = controller.getPossibleDestinationDirectories()
 
         if (destinationDirs.length === 0) {
@@ -36,11 +38,7 @@ export default function ({controller}: MoveDeckOrDirectoryModalProps) {
         )
 
         setDestinationDirOptions(destinationDirOptions)
-    }, [
-        controller.states.showState.val,
-        controller.deckOverviewController.states.tempDeckOrDirectoryState.val,
-        controller.deckOverviewController.states.selectedEntitiesState.val
-    ])
+    }, [controller.states.showState.val])
 
 
     return <KartAIBox>

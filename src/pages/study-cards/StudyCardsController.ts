@@ -9,6 +9,7 @@ import StudyCard from "../../types/StudyCard";
 import {NavigateFunction} from "react-router-dom";
 import Card from "../../types/dbmodel/Card";
 import CardTypeVariantUtils from "../../utils/CardTypeVariantUtils";
+import {loadingGray} from "../../styles/root";
 
 
 interface StudyCardsControllerOptions {
@@ -33,7 +34,6 @@ export default class StudyCardsController {
     public customStudy: boolean
     public navigate: NavigateFunction
     public id: string
-    public isDeck: boolean = true
 
     constructor(options: StudyCardsControllerOptions) {
         this.snackbar = options.snackbar
@@ -48,15 +48,12 @@ export default class StudyCardsController {
     public init = (): boolean => {
         if (!this.id) return false
         if (DeckUtils.getInstance().has(this.id)) {
-            this.isDeck = true
             const cards = CardUtils.getInstance().getAllBy("deckId", this.id)
-
             const studyCards = CardUtils.toStudyCards(this.customStudy ? cards : CardUtils.toLearningCards(cards))
             if (!studyCards.length) return false
             this.states.studyCardsState.set(shuffleArray(studyCards))
             return true
         } else if (DirectoryUtils.getInstance().has(this.id)) {
-            this.isDeck = false
             const cards = CardUtils.getInstance().getCardsByDirectoryId(this.id)
             const studyCards = CardUtils.toStudyCards(this.customStudy ? cards : CardUtils.toLearningCards(cards))
             if (!studyCards.length) return false
@@ -161,25 +158,25 @@ export default class StudyCardsController {
         if (!this.customStudy) {
             const newLearningState = CardUtils.calcNextLearningState(currentStudyCard.card, rating)
             let updateStudyCard = null
-            if (newLearningState !== currentStudyCard.card.learningState) {
-                let dueDuration = Date.now() + CardUtils.getLearningStateDueDuration(newLearningState)
+            // if (newLearningState !== currentStudyCard.card.learningState) {
+            let dueDuration = Date.now() + CardUtils.getLearningStateDueDuration(newLearningState)
 
-                if (rating === 0) dueDuration = Date.now()
-                if (rating === 1 && learningState === 0) dueDuration = Date.now()
+            if (rating === 0) dueDuration = Date.now()
+            if (rating === 1 && learningState === 0) dueDuration = Date.now()
 
-                const updateCard = {
-                    ...currentStudyCard.card,
-                    learningState: newLearningState,
-                    dueAt: dueDuration
-                }
-
-                CardUtils.getInstance().update(updateCard)
-
-                updateStudyCard = {
-                    ...currentStudyCard,
-                    card: updateCard
-                }
+            const updateCard = {
+                ...currentStudyCard.card,
+                learningState: newLearningState,
+                dueAt: dueDuration
             }
+
+            CardUtils.getInstance().update(updateCard)
+
+            updateStudyCard = {
+                ...currentStudyCard,
+                card: updateCard
+            }
+            // }
 
             if (rating === 0) {
                 this.shuffleStudyCards(updateStudyCard)
@@ -221,7 +218,8 @@ export default class StudyCardsController {
 
 
     public navigateBack = () => {
-        if (this.isDeck) {
+
+        if (DeckUtils.getInstance().has(this.id)) {
             this.navigate("/deck/" + this.id)
         } else {
             this.navigate("/folder/" + this.id)

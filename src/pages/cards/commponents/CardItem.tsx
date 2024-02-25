@@ -14,6 +14,7 @@ import NewCardController from "../features/new-card/NewCardController";
 import EditCardController from "../features/edit-card/EditCardController";
 import {useGlobalContext} from "../../../App";
 import {StaticText} from "../../../data/text/staticText";
+import CardItemContextMenu from "./CardItemContextMenu";
 
 interface CardItemProps {
     card: Card
@@ -38,6 +39,7 @@ interface CardItemProps {
 export default function ({card, controller, selected, actions, newCardController, editCardController}: CardItemProps) {
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [contextMenuPos, setContextMenuPos] = React.useState<{ x: number, y: number } | undefined>(undefined);
 
     const {cardTypesController} = useGlobalContext()
 
@@ -62,6 +64,12 @@ export default function ({card, controller, selected, actions, newCardController
         }
     }
 
+    function handleContextMenu(event: React.MouseEvent<HTMLElement>) {
+        event.preventDefault()
+        const {pageX, pageY} = event
+        setContextMenuPos({x: pageX, y: pageY})
+    }
+
     if (fieldContents.length < 2) {
         return <KartAIBox flexSpaceBetween sx={cardRow(Boolean(selected), "paused")} id={"row-" + card.id}
                           onClick={handleClickRow}>
@@ -84,7 +92,18 @@ export default function ({card, controller, selected, actions, newCardController
             menuFunctions={actions}
         />
 
-        <KartAIBox id={"row-" + card.id} onClick={handleClickRow}
+        <CardItemContextMenu
+            controller={controller}
+            card={card}
+            position={contextMenuPos}
+            onClose={() => setContextMenuPos(undefined)}
+            entitiesSelected={controller.entitiesSelected()}
+            menuFunctions={actions}
+        />
+
+        <KartAIBox onContextMenu={handleContextMenu}
+                   id={"row-" + card.id}
+                   onClick={handleClickRow}
                    sx={cardRow(Boolean(selected), CardUtils.getCardStatus(card))}
                    flexSpaceBetween>
             <KartAIBox flexSpaceBetween sx={{width: "80%"}}>

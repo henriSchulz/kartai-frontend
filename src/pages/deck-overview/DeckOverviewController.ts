@@ -24,7 +24,6 @@ interface DeckOverviewControllerOptions {
         selectedEntitiesState: State<DeckOrDirectory[]>
         selectedEntitiesAnchorElState: State<DeckOrDirectory | null>
         currentDirectoryState: State<Directory | null>
-        contextMenuState: State<ContextMenu>
         loadingState: State<boolean>
     },
     snackbar: SnackbarFunction,
@@ -47,13 +46,6 @@ export default class DeckOverviewController extends ViewEntitySelectionControlle
     public csvFileSelectorId = "csv-file-selector"
 
     private topLevelInitDone: boolean
-
-
-    public static initialContextMenuState = {
-        show: false,
-        x: 0,
-        y: 0
-    }
 
     constructor(options: DeckOverviewControllerOptions) {
         super({
@@ -97,19 +89,6 @@ export default class DeckOverviewController extends ViewEntitySelectionControlle
     }
 
 
-    public onOpenContextMenu(event: React.MouseEvent<HTMLDivElement>) {
-        const {pageX, pageY} = event
-        if (this.states.contextMenuState.val.show) return this.onCloseContextMenu()
-        this.states.contextMenuState.set({
-            show: true,
-            x: pageX,
-            y: pageY
-        })
-    }
-
-    public onCloseContextMenu() {
-        this.states.contextMenuState.set(DeckOverviewController.initialContextMenuState)
-    }
 
     /**
      *

@@ -111,7 +111,10 @@ export default function () {
                         <KartAIBox gridStart sx={{gridTemplateColumns: "auto auto"}}>
                             <Typography ml={3} sx={mediumBoldText}>{StaticText.OWNER}:</Typography>
                             <Typography ml={3}
-                                        sx={deckPageCardsCount("new", false)}>{`user@${sharedItem?.clientId?.slice(0, 6)}`}</Typography>
+                                        sx={deckPageCardsCount("new", false)}>{
+                                sharedItem?.clientId !== "mdAxDWkf3ae6DaAI9YJHiM26EpK2" ?
+                                    `user@${sharedItem?.clientId?.slice(0, 6)}` : "Timon"
+                            }</Typography>
                             <Typography ml={3} sx={mediumBoldText}>{StaticText.CARDS}:</Typography>
                             <Typography ml={3}
                                         sx={deckPageCardsCount("learning", false)}>{importData?.cards?.length ?? 0}</Typography>

@@ -83,24 +83,57 @@ export default class CardContentController {
         return result
     }
 
+    private replaceImageTemplates = (text: string): string => {
+        const pattern: RegExp = /\{{img:(.*?)\}}/g;
+        const matches: RegExpMatchArray | null = text.match(pattern);
 
-    public getFront = (): string => {
-        const replaceMethods = [this.replaceBasicFields, this.replaceTypeFields]
-        let result = this.templateFront
-        for (const replaceMethod of replaceMethods) {
+        let tmp = text
+
+
+        if (matches) {
+            try {
+                for (const match of matches) {
+
+                    const url = match.split("{{img:")[1].replaceAll("}", "")
+                    console.log(url)
+                    tmp = tmp.replaceAll(match, `<img class="card-image-size" src="${url}" />`);
+                }
+            } catch (e) {
+                //pass if the image cannot be loaded or parsed
+            }
+        }
+
+        return tmp
+
+    }
+
+
+    public getCardContent = (template: "front" | "back") => {
+        let result;
+        if (template === "front") {
+            result = this.templateFront
+        } else {
+            result = this.templateBack
+        }
+        const replaceFieldMethods = [this.replaceBasicFields, this.replaceTypeFields]
+        const replaceMethods = [this.replaceImageTemplates]
+
+        for (const replaceMethod of replaceFieldMethods) {
             result = replaceMethod(this.fieldContentPairs, result)
+        }
+        for (const replaceMethod of replaceMethods) {
+            result = replaceMethod(result)
         }
 
         return result
     }
 
+    public getFront = (): string => {
+        return this.getCardContent("front")
+    }
+
     public getBack = (): string => {
-        const replaceMethods = [this.replaceBasicFields, this.replaceTypeFields]
-        let result = this.templateBack
-        for (const replaceMethod of replaceMethods) {
-            result = replaceMethod(this.fieldContentPairs, result)
-        }
-        return result
+        return this.getCardContent("back")
     }
 
     private getContentLength = (fieldContentPairs: FieldContentPair[], template: string): number => {

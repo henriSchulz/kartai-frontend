@@ -1,7 +1,6 @@
 import Breakpoint from "../types/Breakpoint";
 
 
-
 export const ID_PROPERTIES = {
     length: 16,
     characters: 'abcdefghijklmnopqrstuvwxyz0123456789'
@@ -64,6 +63,18 @@ export function createDownload(fileName: string, fileContent: string): void {
     URL.revokeObjectURL(fileUrl);
 }
 
+export function createDownloadByUrl(url: string, filename: string): void {
+    fetch(url)
+        .then(response => response.blob())
+        .then(blob => {
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+        })
+        .catch(console.error);
+}
+
 export function formatDuration(timestamp: number): string {
     const millisecondsPerSecond = 1000;
     const millisecondsPerMinute = 1000 * 60;
@@ -113,8 +124,14 @@ export function numberArray(from: number, to: number) {
 
 export function getTextFieldValue(id: string): string | undefined {
     const element = document.getElementById(id) as HTMLInputElement
-    if(!element) return undefined
+    if (!element) return undefined
     return element.value
+}
+
+export function getCheckBoxValue(id: string): boolean {
+    const element = document.getElementById(id) as HTMLInputElement
+    if (!element) return false
+    return element.checked
 }
 
 export function wait(ms: number): Promise<void> {
@@ -132,7 +149,43 @@ export function getRandomElements<T>(arr: T[], num: number): T[] {
             result.push(arr[index]);
         }
     }
-
     return result;
 }
+
+export function markdownToCsv(
+    markdown: string,
+    options: {
+        hasHeader?: boolean;
+    } = {}
+): string[][] {
+    // Split the markdown string into lines
+    const lines = markdown.split('\n');
+
+    // Get the header line if it exists
+    const headerLine = options.hasHeader && lines.length > 0 ? lines.shift() : undefined;
+
+    lines.shift();
+
+    // Create a new array to store the CSV data
+    const csvData: string[][] = [];
+
+    // Iterate over the lines
+    for (const line of lines) {
+        // Split the line into columns
+        const columns = line.split('|');
+
+        // Remove any empty columns and trim whitespace from each column
+        const filteredColumns = columns
+            .filter(column => column !== '')
+            .map(column => column.trim());
+
+        // Add the columns to the CSV data array
+        if (filteredColumns.length > 0)
+            csvData.push(filteredColumns);
+    }
+
+    // Return the CSV data as a two-dimensional array
+    return csvData;
+}
+
 

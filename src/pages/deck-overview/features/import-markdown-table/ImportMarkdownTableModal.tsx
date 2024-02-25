@@ -1,24 +1,24 @@
 import KartAIBox from "../../../../components/ui/KartAIBox";
 import KartAIModal from "../../../../components/KartAIModal";
 import {StaticText} from "../../../../data/text/staticText";
-import {Button, Stack, Step, StepLabel, Stepper, Typography} from "@mui/material";
+import {Button, Checkbox, FormControlLabel, Stack, Step, StepLabel, Stepper, Typography} from "@mui/material";
 import KartAISelect from "../../../../components/ui/KartAISelect";
 import {useMemo} from "react";
 import DeckUtils from "../../../../utils/DeckUtils";
 import CardTypeUtils from "../../../../utils/CardTypeUtils";
 import {Add, ArrowForward} from "@mui/icons-material";
 import FieldUtils from "../../../../utils/FieldUtils";
-import ImportCraftTableController from "./ImportCraftTableController";
+import ImportMarkdownTableController from "./ImportMarkdownTableController";
 import KartAITextField from "../../../../components/ui/KartAITextField";
 import KartAIButton from "../../../../components/ui/KartAIButton";
 
-interface ImportCraftTableModalProps {
-    controller: ImportCraftTableController
+interface ImportMarkdownTableModalProps {
+    controller: ImportMarkdownTableController
 }
 
 
-export default function ({controller}: ImportCraftTableModalProps) {
-    const steps = [StaticText.READ_CRAFT_TABLE, StaticText.ASSIGN_FIELDS];
+export default function ({controller}: ImportMarkdownTableModalProps) {
+    const steps = [StaticText.READ_MARKDOWN_TABLE, StaticText.ASSIGN_FIELDS];
 
     const activeStep = controller.states.activeCsvImportStepState.val
 
@@ -46,6 +46,8 @@ export default function ({controller}: ImportCraftTableModalProps) {
             const selectedCardType = CardTypeUtils.getInstance().getById(controller.states.selectedCardTypeIdState.val)
             const cardTypeFields = FieldUtils.getInstance().getAllBy("cardTypeId", selectedCardType.id)
             const fieldOptions = cardTypeFields.map(field => ({label: field.name, value: field.id}))
+
+            if(!controller.states.parsedCraftTableState.val[0]) return null
 
             if (cardTypeFields.length < controller.states.parsedCraftTableState.val[0].length) {
                 fieldOptions.push({label: `[${StaticText.EMPTY}]`, value: "EMPTY"})
@@ -81,7 +83,7 @@ export default function ({controller}: ImportCraftTableModalProps) {
 
     return <KartAIBox>
         <KartAIModal hideButtons size="sm"
-                     title={StaticText.IMPORT_CRAFT_TABLE}
+                     title={StaticText.IMPORT_MARKDOWN_TABLE}
                      show={controller.states.showState.val}
                      onClose={controller.close}
                      onSubmit={controller.submit}
@@ -176,15 +178,15 @@ export default function ({controller}: ImportCraftTableModalProps) {
 
 
             {activeStep === 0 &&
-                <KartAIBox gridCenter mt={4}>
-                    <KartAITextField fullWidth id="craft-url" label={StaticText.CRAFT_DOCUMENT_LINK}
+                <KartAIBox gridStart mt={4}>
+                    <FormControlLabel control={<Checkbox id="table-head" />} label={StaticText.TABLE_HEAD}/>
+                    <KartAITextField mt={2} rows={5} multiline fullWidth id="markdown-text" label={StaticText.MARKDOWN_TABLE}
                                      variant="outlined"/>
 
-                    <KartAITextField defaultValue={"2"} mt={2} type="number" fullWidth id="num-of-rows" label={StaticText.NUM_OF_COLUMNS_IN_TABLE}
-                                     variant="outlined"/>
+
 
                     <KartAIButton mt={2} loading={controller.states.loadingState.val} sx={{alignSelf: "right"}}
-                                  onClick={controller.onParseCraftTable}
+                                  onClick={controller.onParseMarkdownTable}
                                   fullWidth
                                   variant="outlined">
                         {StaticText.CONTINUE}

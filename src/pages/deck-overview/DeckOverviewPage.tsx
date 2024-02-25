@@ -6,7 +6,7 @@ import {useAppDispatch, useAppSelector} from "../../hooks/reduxUtils";
 import KartAIBox from "../../components/ui/KartAIBox";
 import ListView from "../../components/list-view/ListView";
 import ListViewHead from "../../components/list-view/ListViewHead";
-import {Add, CloudUpload, Folder, FolderOutlined, Image, Notes, School, TableRowsOutlined} from "@mui/icons-material";
+import {Add, CloudUpload, Folder, Notes, School, TableRowsOutlined, ContentPaste} from "@mui/icons-material";
 import {StaticText} from "../../data/text/staticText";
 import {ClickAwayListener, Divider} from "@mui/material";
 import {lightBorderColor} from "../../styles/root";
@@ -16,7 +16,6 @@ import ListViewContent from "../../components/list-view/ListViewContent";
 import DeckOverviewController from "./DeckOverviewController";
 
 import DeckOverviewItem from "./components/DeckOverviewItem";
-import ContextMenu from "../../types/ContextMenu";
 import NewDeckOrDirectoryController from "./features/new-deck-or-directory/NewDeckOrDirectoryController";
 import NewDeckOrDirectoryModal from "./features/new-deck-or-directory/NewDeckOrDirectoryModal";
 import RenameDeckOrDirectoryController from "./features/rename-deck-or-directory/RenameDeckOrDirectoryController";
@@ -43,9 +42,10 @@ import ImportCSVController from "./features/import-csv/ImportCSVController";
 import ImportCSVModal from "./features/import-csv/ImportCSVModal";
 import {isXsWindow} from "../../utils/general";
 import TopProgressbar from "../../components/TopProgressbar";
-import ImportCraftTableController from "./features/import-craft-table/ImportCraftTableController";
-import ImportCraftTableModal from "./features/import-craft-table/ImportCraftTableModal";
+import ImportMarkdownTableController from "./features/import-markdown-table/ImportMarkdownTableController";
+import ImportCraftTableModal from "./features/import-markdown-table/ImportMarkdownTableModal";
 import {Icons} from "../../asserts/asserts";
+import CardUtils from "../../utils/CardUtils";
 
 
 export default function () {
@@ -91,7 +91,6 @@ export default function () {
     const [selectedDestinationDeckId, setSelectedDestinationDeckId] = useState<string>("")
     const [selectedCardTypeId, setSelectedCardTypeId] = useState<string>("")
 
-    const [contextMenu, setContextMenu] = React.useState<ContextMenu>(DeckOverviewController.initialContextMenuState)
 
     const [addMenuAnchorEl, setAddMenuAnchorEl] = React.useState<null | HTMLElement>(null)
     const [importMenuAnchorEl, setImportMenuAnchorEl] = React.useState<null | HTMLElement>(null)
@@ -102,7 +101,6 @@ export default function () {
             addMenuAnchorElState: {val: addMenuAnchorEl, set: setAddMenuAnchorEl},
             tempDeckOrDirectoryState: {val: tempSelectedDeckOrDirectory, set: setTempSelectedDeckOrDirectory},
             selectedEntitiesState: {val: selectedDecksOrDirectories, set: setSelectedDecksOrDirectories},
-            contextMenuState: {val: contextMenu, set: setContextMenu},
             currentDirectoryState: {val: currentDirectory, set: setCurrentDirectory},
             selectedEntitiesAnchorElState: {
                 val: selectedDecksOrDirectoriesAnchorEl,
@@ -215,7 +213,7 @@ export default function () {
         loadingBackdrop,
     })
 
-    const importCraftTableController = new ImportCraftTableController({
+    const importCraftTableController = new ImportMarkdownTableController({
         snackbar, loadingBackdrop, deckOverviewController: controller, newDeckOrDirectoryController, states: {
             showState: {val: showImportCraftTableModal, set: setShowImportCraftTableModal},
             selectedDestinationDeckIdState: {val: selectedDestinationDeckId, set: setSelectedDestinationDeckId},
@@ -310,7 +308,9 @@ export default function () {
 
     const learnFolderActionButton = {
         text: StaticText.LEARN_FOLDER, onClick: () => {
-            navigate(`/study/${currentDirectory?.id}`)
+            if (CardUtils.getInstance().getCardLearningStatesSumByDirectoryId(currentDirectory?.id) === 0) {
+                snackbar(StaticText.NO_CARD_TO_LEARN, 5000, "error")
+            } else navigate(`/study/${currentDirectory?.id}`)
         },
         icon: <School/>
     }
@@ -336,15 +336,16 @@ export default function () {
             icon: <Notes/>, onClick() {
                 controller.onOpenKpkgFileSelector()
             }
-        }, {
+        },
+        {
             text: StaticText.CSV_FORMAT,
             icon: <TableRowsOutlined/>,
             onClick() {
                 controller.onOpenCsvFileSelector()
             }
         }, {
-            text: StaticText.CRAFT_TABLE,
-            icon: <img height="23" width="23" src={Icons.CRAFT}/>,
+            text: StaticText.MARKDOWN_TABLE,
+            icon: <ContentPaste/>,
             onClick() {
                 importCraftTableController.open()
             }

@@ -385,13 +385,13 @@ export interface StaticTextKeys {
     ADD_CARDS: string
     CARDS_ADDED: string //{cards}
     NUM_OF_COLUMNS_TOO_SMALL: string
-    CRAFT_IMPORT_FAILED: string
-    CRAFT_DOCUMENT_LINK: string
+    MARKDOWN_IMPORT_FAILED: string
+    MARKDOWN_DOCUMENT_LINK: string
     NUM_OF_COLUMNS_IN_TABLE: string
     TABLE_FIELDS: string
     NUM_OF_COLUMNS_TOO_BIG: string
-    CRAFT_TABLE: string
-    READ_CRAFT_TABLE: string
+    MARKDOWN_TABLE: string
+    READ_MARKDOWN_TABLE: string
     SUB_SLOGAN: string
     KARTAI_WEB: string
     EFFICIENT_LEARNING_ALGORITHMS_FEATURE: string
@@ -399,6 +399,13 @@ export interface StaticTextKeys {
     ALL_RIGHTS_RESERVED: string
     ICONS_BY: string
     BY: string
-    IMPORT_CRAFT_TABLE: string
+    IMPORT_MARKDOWN_TABLE: string
     PRIVACY_POLICY_INFO: string
+    DOWNLOAD_FOR_WINDOWS: string
+    DOWNLOAD_SECTION_TITLE: string
+    DOWNLOAD_FOR_MAC: string
+    DOWNLOAD_BUTTON_LABEL: string
+    DOWNLOAD_FOR_MAC_DESCRIPTION: string
+    DOWNLOAD_FOR_WINDOWS_DESCRIPTION: string
+    TABLE_HEAD: string
 }

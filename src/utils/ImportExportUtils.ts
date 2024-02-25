@@ -112,7 +112,7 @@ export default class ImportExportUtils {
                     if (!DeckUtils.getInstance().isValidEntity(deck, ["isShared"])) return false
                     const {id: oldDeckId, ...deckToAdd} = deck
                     const newDeckId = generateModelId()
-                    itemsToImport.decks.push({...deckToAdd, id: newDeckId, isShared: 0})
+                    itemsToImport.decks.push({...deckToAdd, id: newDeckId, isShared: 0, parentId: null})
                     const res = this.deckImport(oldDeckId, newDeckId, importExportObject)
                     if (!res) return false
                     const {cards, fieldContents} = res
@@ -173,7 +173,7 @@ export default class ImportExportUtils {
             const decks = DirectoryUtils.getInstance().getSubDecks(deckOrDirectory.id)
             itemsToExport.decks.push(...decks)
             for (const deck of decks) {
-                const cards = CardUtils.getInstance().getCardsByDeckId(deckOrDirectory.id)
+                const cards = CardUtils.getInstance().getCardsByDeckId(deck.id)
                 itemsToExport.cards.push(...cards)
                 for (const card of cards) {
                     const fieldContents = FieldContentUtils.getInstance().getAllBy("cardId", card.id)

@@ -80,6 +80,12 @@ export default class CardUtils extends EntityUtils<Card> {
         return this.getCardLearningStates(this.getCardsByDirectoryId(directoryId))
     }
 
+    getCardLearningStatesSumByDirectoryId(directoryId?: string): number {
+        if (!directoryId) return 0
+        const states = this.getCardLearningStatesByDirectoryId(directoryId)
+        return states.newCards + states.learningCards + states.reviewCards
+    }
+
 
     private getCardLearningStates(cards: Card[]): { newCards: number, learningCards: number, reviewCards: number } {
         let newCards = 0
@@ -215,6 +221,11 @@ export default class CardUtils extends EntityUtils<Card> {
                 this.deleteBy("deckId", deck.id, {local: true, api: false})
             }
         }
+    }
+
+    public countByDirectoryId(directoryId?: string): number {
+        if (!directoryId) return 0
+        return this.getCardsByDirectoryId(directoryId).length
     }
 
 

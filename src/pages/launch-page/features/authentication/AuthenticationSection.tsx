@@ -1,0 +1,117 @@
+import {Box, Button, CircularProgress, TextField, Typography} from "@mui/material";
+import React, {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
+import AuthenticationController from "./AuthenticationController";
+import {StaticText} from "../../../../data/text/staticText";
+import KartAIBox from "../../../../components/ui/KartAIBox";
+import KartAIModal from "../../../../components/KartAIModal";
+import GoogleLoginButton from "../../../../features/authentication/components/GoogleLoginButton";
+import KartAITextField from "../../../../components/ui/KartAITextField";
+import KartAIButton from "../../../../components/ui/KartAIButton";
+import {Settings} from "../../../../Settings";
+
+
+
+interface AuthenticationModalProps {
+    controller: AuthenticationController
+}
+
+export default function ({controller}: AuthenticationModalProps) {
+
+
+    const isSigningUp = controller.states.isSigningUpState.val
+
+    return <KartAIBox>
+            <KartAIBox>
+                <Typography mb={2} variant="h4">{isSigningUp ? StaticText.SIGN_UP : StaticText.SIGN_IN}</Typography>
+                {isSigningUp && <>
+                    <GoogleLoginButton onClick={controller.onSignInWithGoogle} loading={controller.states.loadingState.val} />
+
+                    <Typography sx={{textAlign: "center", my: 2}}>{StaticText.OR}</Typography>
+
+
+                    <KartAITextField sx={{mb: 1}}
+                                     id="sign-up-email"
+                                     label={StaticText.EMAIL}
+                                     fullWidth
+                                     variant="filled"
+                                     type="email"/>
+
+
+                    <KartAITextField label={StaticText.PASSWORD} sx={{mb: 1}}
+                                     id="sign-up-password"
+                                     fullWidth variant="filled"
+                                     type="password"/>
+
+
+                    <KartAITextField label={StaticText.CONFIRM_PASSWORD}
+                                     sx={{mb: 1}}
+                                     id="sign-up-confirm-password"
+                                     fullWidth variant="filled"
+                                     type="password"/>
+
+                    <KartAIButton loading={controller.states.loadingState.val} sx={{my: 2}} fullWidth
+                                  onClick={controller.onSubmit}
+                                  variant="contained">
+                        {StaticText.SIGN_UP}
+                    </KartAIButton>
+
+                    <KartAIBox>
+                        {StaticText.PRIVACY_POLICY_INFO}
+                        <a style={{
+                            color: "#21658F",
+                            textDecoration: "underline",
+                            cursor: "pointer"
+                        }} onClick={() => window.open(Settings.PRIVACY_POLICY_LINK)}>{StaticText.PRIVACY_POLICY}</a>
+                    </KartAIBox>
+
+                    <KartAIBox mt={2} sx={{textAlign: "center"}} flexCenter>
+                        <span style={{marginRight: "10px"}}>{StaticText.ALREADY_HAS_ACCOUNT}</span>
+                        <a onClick={() => controller.states.isSigningUpState.set(false)} style={{
+                            color: "#21658F",
+                            textDecoration: "underline",
+                            cursor: "pointer"
+                        }}>{StaticText.SIGN_IN}</a>
+                    </KartAIBox>
+
+                </>}
+
+                {!isSigningUp && <>
+                    <GoogleLoginButton onClick={controller.onSignInWithGoogle} loading={controller.states.loadingState.val} />
+
+                    <Typography sx={{textAlign: "center", my: 2}}>{StaticText.OR}</Typography>
+
+                    <KartAITextField sx={{mb: 1}}
+                                     id="sign-in-email"
+                                     label={StaticText.EMAIL}
+                                     fullWidth
+                                     variant="filled"
+                                     type="email"/>
+
+
+                    <KartAITextField label={StaticText.PASSWORD} sx={{mb: 1}}
+                                     id="sign-in-password"
+                                     fullWidth variant="filled"
+                                     type="password"/>
+
+                    <KartAIButton loading={controller.states.loadingState.val} sx={{my: 2}} fullWidth
+                                  onClick={controller.onSubmit}
+                                  variant="contained">
+                        {StaticText.SIGN_IN}
+                    </KartAIButton>
+
+
+                    <KartAIBox mt={2} sx={{textAlign: "center"}} flexCenter>
+                        <span style={{marginRight: "10px"}}>{StaticText.NO_ACCOUNT}</span>
+                        {/*<Image height={30} width={30} src={userData.imgUrl} roundedCircle/>*/}
+                        <a onClick={() => controller.states.isSigningUpState.set(true)} style={{
+                            color: "#21658F",
+                            textDecoration: "underline",
+                            cursor: "pointer"
+                        }}>{StaticText.SIGN_UP}</a>
+                    </KartAIBox>
+
+                </>}
+            </KartAIBox>
+    </KartAIBox>
+}
