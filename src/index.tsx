@@ -5,12 +5,15 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import store from "./stores/store";
 import {Provider} from "react-redux";
+import 'katex/dist/katex.min.css';
 import {BrowserRouter} from "react-router-dom";
 
 
 declare global {
     interface Window {
         tempInputValue: string;
+        lastActiveTextArea: HTMLTextAreaElement | null;
+        lastTextSelection: string | null
     }
 }
 

@@ -188,4 +188,51 @@ export function markdownToCsv(
     return csvData;
 }
 
+export function getLastActiveTextArea(): HTMLTextAreaElement | null {
+    return window.lastActiveTextArea;
+}
+
+export function insertFormatting(format: "**" | "*" | "$" | "`") {
+
+    const currentInput = getLastActiveTextArea()
+
+    if (!currentInput) return
+    const selectedText = window.lastTextSelection
+
+    const inputText = currentInput.value
+    const selectionStart = currentInput.selectionStart!
+    const selectionEnd = currentInput.selectionEnd!
+
+    let newText = ""
+    if (selectedText) {
+        newText = inputText.substring(0, selectionStart) + format + selectedText + format + inputText.substring(selectionEnd)
+    } else {
+        newText = inputText.substring(0, selectionStart) + format + format + inputText.substring(selectionEnd)
+    }
+
+    currentInput.value = newText
+}
+
+export function insertFormattingActiveTextArea(format: "**" | "*" | "$" | "`") {
+
+    const currentInput = document.activeElement as HTMLTextAreaElement
+
+    if (!currentInput || currentInput.tagName !== "TEXTAREA") return
+
+    if (!currentInput) return
+    const selectedText = currentInput.value.substring(currentInput.selectionStart, currentInput.selectionEnd)
+
+    const inputText = currentInput.value
+    const selectionStart = currentInput.selectionStart!
+    const selectionEnd = currentInput.selectionEnd!
+
+    let newText = ""
+    if (selectedText) {
+        newText = inputText.substring(0, selectionStart) + format + selectedText + format + inputText.substring(selectionEnd)
+    } else {
+        newText = inputText.substring(0, selectionStart) + format + format + inputText.substring(selectionEnd)
+    }
+
+    currentInput.value = newText
+}
 

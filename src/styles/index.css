@@ -1,9 +1,28 @@
 body {
     font: 400 16px 'Varela Round', sans-serif;
-    user-select: none;
+    /*user-select: none;*/
     overflow-x: hidden;
+    overflow-y: hidden;
 }
 
+code {
+    background-color: #f0f0f0; /* Hintergrundfarbe der Box */
+    border: 1px solid #ccc; /* Rahmen der Box */
+    border-radius: 10px; /* Abgerundete Ecken */
+    padding: 20px; /* Innenabstand der Box */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Schatten der Box */
+}
+
+.mark {
+    background-color: #FFFBBB; /* gelber Hintergrund */
+    color: #000000; /* schwarzer Text */
+    padding: 0.03em 0.1em; /* Rand um den Text */
+    border-radius: 0.3em; /* abgerundete Ecken */
+    box-shadow: 0 0 0.2em rgba(0, 0, 0, 0.2); /* leichter Schatten */
+    /*font-weight: bold; !* Text fett *!*/
+    display: inline-block;
+    white-space: nowrap;
+}
 
 
 *::-webkit-scrollbar {
@@ -72,6 +91,23 @@ button {
 
 .card-image-size {
     max-height: 400px;
+}
+
+.katex-display, .katex-display > .katex, .katex-display > .katex > .katex-html {
+    display: inline !important;
+    /*/ / make it inline, so it can render with your text even after ` displayMode: true `*/
+}
+
+.katex {
+    text-align: center !important;
+}
+
+.katex-display {
+    text-align: left !important;
+}
+
+.katex-display > .katex {
+    text-align: left !important;
 }
 
 

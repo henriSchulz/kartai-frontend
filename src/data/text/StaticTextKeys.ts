@@ -161,6 +161,7 @@ export interface StaticTextKeys {
     ADDED: string;
     DECK_ADDED: string;
     LEARNING_LEVEL: string;
+    AVERAGE_LEARNING_LEVEL: string;
     CARD_TYPE_ADDED: string;
     ENTER_ANSWER: string;
     ONE_TEXT_FIELD_ALLOWED: string;
@@ -408,4 +409,7 @@ export interface StaticTextKeys {
     DOWNLOAD_FOR_MAC_DESCRIPTION: string
     DOWNLOAD_FOR_WINDOWS_DESCRIPTION: string
     TABLE_HEAD: string
+    DUE: string
+    DUE_IN: string
+    DUE_NOW: string
 }

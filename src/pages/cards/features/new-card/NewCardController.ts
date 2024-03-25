@@ -7,7 +7,7 @@ import FieldUtils from "../../../../utils/FieldUtils";
 import {StaticText} from "../../../../data/text/staticText";
 import FieldContentUtils from "../../../../utils/FieldContentUtils";
 import Card from "../../../../types/dbmodel/Card";
-import {generateModelId} from "../../../../utils/general";
+import {generateModelId, getLastActiveTextArea} from "../../../../utils/general";
 import FieldContent from "../../../../types/dbmodel/FieldContent";
 import CardUtils from "../../../../utils/CardUtils";
 import {Limits} from "../../../../Settings";
@@ -111,7 +111,24 @@ export default class NewCardController extends ModalController<NewCardController
         localStorage.setItem(LocalStorageKeys.LAST_SELECTED_CARD_TYPE, this.states.selectedCardTypeIdState.val)
         this.close()
         this.snackbar(StaticText.CARD_ADDED, 4000)
-
     }
+
+    public getOnKeyboardShortcuts = (shortcuts: { [char: string]: () => void }, isModalOpen: boolean) => {
+        return (event: KeyboardEvent) => {
+            if (isModalOpen) return
+            const ctrl = event.ctrlKey || event.metaKey
+
+            if (ctrl) {
+                const char = event.key
+                if (shortcuts[char]) {
+                    shortcuts[char]()
+                }
+            }
+        }
+    }
+
+
+
+
 
 }

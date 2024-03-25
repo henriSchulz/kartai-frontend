@@ -205,7 +205,9 @@ export default function (props: StudyCardsPage) {
                                      templateFront={currentStudyCardData.templateFront}
                                      fieldContentPairs={currentStudyCardData.fieldContentPairs}
                         />
-                        <Divider/>
+
+
+
                         <KartAIBox mb={1} flexCenter fullWidth hide={customStudy}>
                             <Typography
                                 sx={studyCardsPageCardsCount("new", !initDone)}>{cardsInfo.newCards}</Typography>

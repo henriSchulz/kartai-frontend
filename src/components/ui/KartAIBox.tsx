@@ -49,6 +49,8 @@ interface KartAIBoxProps {
     htmlString?: string
 
     halfWidth?: boolean
+
+    component?: React.ElementType
 }
 
 export default function (props: KartAIBoxProps) {
@@ -102,7 +104,7 @@ export default function (props: KartAIBoxProps) {
             sx = {...sx, gap: props.spacing}
         }
 
-        if(props.halfWidth) {
+        if (props.halfWidth) {
             sx = {...sx, width: "50%"}
         }
 
@@ -121,11 +123,11 @@ export default function (props: KartAIBoxProps) {
         sx={getSx()}
         dangerouslySetInnerHTML={{__html: props.htmlString}}/>
 
-    return <Box className={props.className}
-        id={props.id} onDoubleClick={props.onDoubleClick}
-        onContextMenu={props.onContextMenu}
-        onClick={props.onClick}
-        sx={getSx()}>
+    return <Box component={props.component} className={props.className}
+                id={props.id} onDoubleClick={props.onDoubleClick}
+                onContextMenu={props.onContextMenu}
+                onClick={props.onClick}
+                sx={getSx()}>
         {props.children}
     </Box>
 }

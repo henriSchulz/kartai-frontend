@@ -60,8 +60,6 @@ export default class AppController {
         this.states = options.states
         this.navigate = options.navigate
         this.path = options.path
-
-        console.log(Settings.IS_ELECTRON)
     }
 
 
@@ -199,6 +197,29 @@ export default class AppController {
     public navigateToLaunchPage = () => {
         if (Settings.IS_ELECTRON) return
         this.navigate("/")
+    }
+
+    public onActiveInputChange = (event: FocusEvent) => {
+
+        const element = event.target as HTMLElement
+        window.lastTextSelection = null
+
+        if (!element) return
+
+        if (element.tagName !== "TEXTAREA") return
+
+        console.log("LEAVE")
+
+        const textArea = element as HTMLTextAreaElement
+        window.lastActiveTextArea = textArea
+
+        const selectedText = textArea.value.substring(textArea.selectionStart, textArea.selectionEnd)
+        console.log("selectedText", selectedText)
+        if (selectedText) {
+            window.lastTextSelection = selectedText
+        }
+
+
     }
 
 

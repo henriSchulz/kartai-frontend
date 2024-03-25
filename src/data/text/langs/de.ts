@@ -238,6 +238,7 @@ const GERMAN: StaticTextKeys = {
     LEARN: "Lernen",
     LEARNED_TIME: "Gelernte Zeit",
     LEARNING_LEVEL: "Lernstufe",
+    AVERAGE_LEARNING_LEVEL: "Durchschnittliche Lernstufe",
     LEARN_ALL: "Alle lernen",
     LEARN_DECK: "Stapel lernen",
     LEARN_FOLDER: "Ordner lernen",
@@ -409,6 +410,9 @@ const GERMAN: StaticTextKeys = {
     DOWNLOAD_FOR_MAC_DESCRIPTION: "Benutze KartAI auf deinem Mac und genieße die Vorteile der intelligenten Karteikarten-App.",
     DOWNLOAD_FOR_WINDOWS_DESCRIPTION: "Lade KartAI für Windows herunter und profitiere von den Vorteilen der intelligenten Karteikarten-App.",
     TABLE_HEAD: "Hat die Markdown Tabelle eine Kopfzeile?",
+    DUE: "Fällig",
+    DUE_IN: "Fällig in",
+    DUE_NOW: "Jetzt fällig",
 }
 
 export default GERMAN

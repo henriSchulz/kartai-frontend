@@ -145,6 +145,7 @@ export default class StudyCardsController {
 
     public flipToFront = (rating: 0 | 1 | 2 | 3) => {
         if (this.states.backHiddenState.val) return
+
         const currentStudyCard = this.getCurrentStudyCard()
 
         if (!currentStudyCard) throw new Error("No current study card")
@@ -205,7 +206,9 @@ export default class StudyCardsController {
 
     public flipToBack = () => {
         this.updateTypedAnswerFieldValue()
+
         this.states.backHiddenState.set(false)
+
     }
 
 

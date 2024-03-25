@@ -115,6 +115,16 @@ function App() {
         appController.init().then(r => setTopLevelInitDone(true))
     }, [])
 
+    React.useEffect(() => {
+        // window.addEventListener("focus", appController.onActiveInputChange, true)
+        window.addEventListener("blur", appController.onActiveInputChange, true)
+
+        return () => {
+            // window.removeEventListener("focus", appController.onActiveInputChange, true)
+            window.removeEventListener("blur", appController.onActiveInputChange, true)
+        }
+    })
+
 
     return (
 

@@ -3,7 +3,7 @@ import {Theme} from "@mui/material";
 import {theme} from "../../../styles/theme";
 import {learnCardsCountColor, loadingGray, newCardsCountColor, reviewCardsCountColor} from "../../../styles/root";
 
-export const cardWidth = {xl: 960, lg: 960, md: 800, sm: 600, xs: 400}
+export const cardWidth = {xl: 1050, lg: 1050, md: 800, sm: 600, xs: 400}
 
 
 function transformCardWidth(change: number) {
@@ -41,7 +41,8 @@ export const cardsRemainingNum = {
 
 export const cardStyles: SxProps<Theme> = {
     mt: {xl: 5, lg: 3, md: 2, sm: 2, xs: 0.5},
-    p: {md: 5, xs: 3},
+    px: {md: 5, xs: 3},
+    py: {md: 3, xs: 3},
     width: cardWidth,
     height: cardHeight,
     overflow: "hidden",

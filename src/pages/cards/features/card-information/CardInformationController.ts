@@ -3,6 +3,8 @@ import CardsController from "../../CardsController";
 import Card from "../../../../types/dbmodel/Card";
 import DeckUtils from "../../../../utils/DeckUtils";
 import DirectoryUtils from "../../../../utils/DirectoryUtils";
+import {formatDuration} from "../../../../utils/general";
+import {StaticText} from "../../../../data/text/staticText";
 
 interface CardInformationControllerOptions extends ModalControllerOptions {
     cardsController: CardsController
@@ -27,6 +29,16 @@ export default class CardInformationController extends ModalController<CardInfor
         }
 
         return ""
+    }
+
+    public getDueIn(): number {
+        const tempSelectedCard = this.cardsController.states.tempSelectedCardState.val
+
+        const dueAt = tempSelectedCard!.dueAt // time stamp when due
+
+        const diff = dueAt - Date.now()
+
+        return diff
     }
 
     public open = (card?: Card) => {

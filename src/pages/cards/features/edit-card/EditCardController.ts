@@ -61,5 +61,19 @@ export default class EditCardController extends ModalController<EditCardControll
         this.close()
     }
 
+    public getOnKeyboardShortcuts = (shortcuts: { [char: string]: () => void }, isModalOpen: boolean) => {
+        return (event: KeyboardEvent) => {
+            if (isModalOpen) return
+            const ctrl = event.ctrlKey || event.metaKey
+
+            if (ctrl) {
+                const char = event.key
+                if (shortcuts[char]) {
+                    shortcuts[char]()
+                }
+            }
+        }
+    }
+
 
 }

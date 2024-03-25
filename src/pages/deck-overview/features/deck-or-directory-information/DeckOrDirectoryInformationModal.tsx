@@ -3,16 +3,20 @@ import DeckOrDirectoryInformationController from "./DeckOrDirectoryInformationCo
 import KartAIModal from "../../../../components/KartAIModal";
 import {StaticText} from "../../../../data/text/staticText";
 import {List, ListItem, ListItemIcon, ListItemText} from "@mui/material";
-import {Badge, Folder, Functions} from "@mui/icons-material";
+import {Badge, Calculate, Folder, Functions} from "@mui/icons-material";
 import CardUtils from "../../../../utils/CardUtils";
 import DirectoryUtils from "../../../../utils/DirectoryUtils";
 import DeckUtils from "../../../../utils/DeckUtils";
+import {useMemo} from "react";
 
 interface DeckOrDirectoryInformationModalProps {
     controller: DeckOrDirectoryInformationController
 }
 
 export default function ({controller}: DeckOrDirectoryInformationModalProps) {
+
+    const averageLearningState = controller.getAverageLearningState()
+    const cardsCount = controller.getCardsCount()
 
     return <KartAIBox>
 
@@ -52,8 +56,19 @@ export default function ({controller}: DeckOrDirectoryInformationModalProps) {
                     <ListItemText primaryTypographyProps={{fontSize: '20px', fontWeight: 550}}
                                   secondaryTypographyProps={{fontSize: '17px'}}
                                   primary={StaticText.CARDS}
-                                  secondary={controller.getCardsCountText()}/>
+                                  secondary={cardsCount}/>
                 </ListItem>
+
+                {cardsCount > 0 && <ListItem disablePadding>
+                    <ListItemIcon>
+                        <Calculate fontSize="large"/>
+                    </ListItemIcon>
+                    <ListItemText primaryTypographyProps={{fontSize: '20px', fontWeight: 550}}
+                                  secondaryTypographyProps={{fontSize: '17px'}}
+                                  primary={StaticText.AVERAGE_LEARNING_LEVEL}
+                                  secondary={averageLearningState}/>
+                </ListItem>}
+
             </List>
         </KartAIModal>
 

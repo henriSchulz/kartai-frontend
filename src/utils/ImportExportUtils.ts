@@ -1,6 +1,6 @@
 import ImportExportObject from "../types/ImportExportObject";
 import DirectoryUtils from "./DirectoryUtils";
-import {generateModelId} from "./general";
+import {generateModelId, wait} from "./general";
 import Directory from "../types/dbmodel/Directory";
 import Deck from "../types/dbmodel/Deck";
 import Card from "../types/dbmodel/Card";
@@ -121,17 +121,37 @@ export default class ImportExportUtils {
                 }
             }
 
+            const tmpExportCards = []
+            const tmpExportFieldContents = []
+
             for (const cardType of importExportObject.cardTypes) {
                 if (!CardTypeUtils.getInstance().isValidEntity(cardType)) return false
                 if (isDefaultCardType(cardType)) continue
-                const {id: oldCardTypeId, ...cardTypeToAdd} = cardType
+                const {id: oldCardTypeId} = cardType
                 const newCardTypeId = generateModelId()
-                itemsToImport.cardTypes.push({...cardTypeToAdd, id: newCardTypeId})
+
+                const updatedCardType = {...cardType, id: newCardTypeId};
+
+                itemsToImport.cardTypes.push(updatedCardType);
+
+
+                for (const card of itemsToImport.cards.filter(e => e.cardTypeId === oldCardTypeId)) {
+
+                    tmpExportCards.push({
+                        ...card, cardTypeId: newCardTypeId
+                    })
+                }
+
                 for (const field of importExportObject.fields.filter(e => e.cardTypeId === oldCardTypeId)) {
                     if (!FieldUtils.getInstance().isValidEntity(field)) return false
                     const {id: oldFieldId, ...fieldToAdd} = field
                     const newFieldId = generateModelId()
                     itemsToImport.fields.push({...fieldToAdd, id: newFieldId, cardTypeId: newCardTypeId})
+                    for (const fieldContent of itemsToImport.fieldContents.filter(e => e.fieldId === oldFieldId)) {
+                        tmpExportFieldContents.push({
+                            ...fieldContent, fieldId: newFieldId
+                        })
+                    }
                 }
                 for (const cardTypeVariant of importExportObject.cardTypeVariants.filter(e => e.cardTypeId === oldCardTypeId)) {
                     if (!CardTypeVariantUtils.getInstance().isValidEntity(cardTypeVariant)) return false
@@ -145,11 +165,14 @@ export default class ImportExportUtils {
                 }
             }
 
+            itemsToImport.cards = tmpExportCards
+            itemsToImport.fieldContents = tmpExportFieldContents
+
 
             await DirectoryUtils.getInstance().add(itemsToImport.directories, options)
             await DeckUtils.getInstance().add(itemsToImport.decks, options)
-            await CardUtils.getInstance().addCardsAndFieldContents(itemsToImport.cards, itemsToImport.fieldContents, options)
             await CardTypeUtils.getInstance().addCardTypesAndVariantsAndFields(itemsToImport.cardTypes, itemsToImport.cardTypeVariants, itemsToImport.fields, options)
+            await CardUtils.getInstance().addCardsAndFieldContents(itemsToImport.cards, itemsToImport.fieldContents, options)
             return true
         } catch (e) {
             console.log(e)

@@ -18,6 +18,7 @@ interface KartAIButtonProps {
 
     sx?: SxProps<Theme>
     startIcon?: React.ReactNode
+    endIcon?: React.ReactNode
 
     mt?: number
     mb?: number
@@ -60,6 +61,7 @@ const KartAIButton = React.forwardRef((props: KartAIButtonProps, ref: React.Ref<
 
     return <Button ref={ref} startIcon={props.startIcon} sx={getSx()} onClick={props.onClick} size={props.size}
                    color={props.color}
+                   endIcon={props.endIcon}
                    disabled={props.disabled || props.loading}
                    fullWidth={props.fullWidth} variant={props.variant}>
         {props.loading ? <KartAIBox spacing={1} flexCenter>

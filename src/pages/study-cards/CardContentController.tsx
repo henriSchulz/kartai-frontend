@@ -2,6 +2,10 @@ import FieldContentPair from "../../types/FieldContentPair";
 import {getWindowWidth} from "../../utils/general";
 import {StaticText} from "../../data/text/staticText";
 import {Svg} from "../../asserts/asserts";
+import {renderToStaticMarkup, renderToString} from "react-dom/server";
+import katex from "katex";
+import Latex from "react-latex";
+
 
 interface CardContentControllerOptions {
     fieldContentPairs: FieldContentPair[]
@@ -34,7 +38,7 @@ export default class CardContentController {
                 console.error("fieldContent is undefined", fieldContentPair)
                 continue
             }
-            result = result.replaceAll(`{{${fieldContentPair.field.name}}}`, fieldContent.content)
+            result = result.replaceAll(`{{${fieldContentPair.field.name}}}`, this.replaceLatex(fieldContent.content))
         }
         return result
     }
@@ -104,7 +108,145 @@ export default class CardContentController {
         }
 
         return tmp
+    }
 
+    private replaceLineBreaks = (text: string): string => {
+
+
+        let result = ""
+
+        for (const line of text.split("\n")) {
+            if (!line.startsWith("<") &&
+                !line.startsWith("```") &&
+                !line.startsWith("{{")
+            ) {
+                result += line + "<br>"
+            } else {
+                result += line
+                if (line.startsWith("<span>")) result += "<br>"
+
+            }
+        }
+
+
+        return result
+    }
+
+    private replaceMarkdownBolt = (text: string): string => {
+        // if anything is wrapped in **text**, it will be bold <strong>text</strong>
+        const pattern: RegExp = /\*\*([^*]+)\*\*/g;
+
+        return text.replaceAll(pattern, "<strong>$1</strong>")
+    }
+
+    private replaceMarkdownItalic = (text: string): string => {
+        // if anything is wrapped in *text*, it will be italic <em>text</em>
+        const pattern: RegExp = /\*([^*]+)\*/g;
+
+        return text.replaceAll(pattern, "<em>$1</em>")
+    }
+
+    private replaceMarkdownBoltItalic = (text: string): string => {
+        // if anything is wrapped in ***text***, it will be bold and italic <strong><em>text</em></strong>
+        const pattern: RegExp = /\*\*\*(.*)\*\*\*/g;
+
+        return text.replaceAll(pattern, "<strong><em>$1</em></strong>")
+    }
+
+    private replaceMarkdownHeaders = (text: string): string => {
+        const pattern: RegExp = /#{1,6}\s*(.*)/g;
+
+        return text.replaceAll(pattern, (match, group) => {
+            const headerLevel = match.split(" ")[0].length;
+
+            return `<h${headerLevel}>${group}</h${headerLevel}>`
+        })
+    }
+
+    private replaceMarkdownLists = (text: string): string => {
+        const pattern: RegExp = /- (.*)/g;
+
+        return text.replaceAll(pattern, (match, group) => {
+            return `<li>${group}</li>`
+        })
+    }
+
+    private replaceMarkdownCodeBlocks = (text: string): string => {
+        const pattern: RegExp = /```([^`]+)```/g;
+        console.log(text.match(pattern))
+        return text.replaceAll(pattern, '<br><code>$1</code><br>');
+    }
+
+    private replaceMarkdownMark = (text: string): string => {
+        // if anything is wrapped in `text` only one no more, it will be marked <mark>text</mark>
+        const pattern: RegExp = /`([^*]+)`/g;
+
+
+        return text.replaceAll(pattern, '<span class="mark">$1</span>');
+    }
+
+    private replaceLatex = (text: string): string => {
+
+        if (this.isTypeCard()) return text
+
+
+        // return renderToString(
+        //     <Latex strict>
+        //         {text}
+        //     </Latex>
+        // )
+
+        let result = text
+        const pattern: RegExp = /\$(.*?)\$/g;
+
+        //extract the latex code, without the $ signs
+        const matches: RegExpMatchArray | null = text.match(pattern);
+
+        if (matches) {
+            // @ts-ignore
+            for (const match of matches) {
+                const code = match.split("$")[1];
+
+
+                const html = katex.renderToString(code, {
+                    // throwOnError: false,
+                    strict: true,
+                    throwOnError: true,
+                    displayMode: true
+
+                })
+
+                // const latexUrl = `https://latex.codecogs.com/svg.latex?${code}`
+                result = result.replaceAll(match, html);
+            }
+
+        }
+
+        return result
+
+    }
+
+
+    private replaceMarkdown = (text: string): string => {
+        if (this.isTypeCard()) return text
+
+        let result = text
+        result = this.replaceMarkdownHeaders(result)
+        result = this.replaceMarkdownLists(result)
+        result = this.replaceLineBreaks(result)
+        result = this.replaceMarkdownBoltItalic(result)
+        result = this.replaceMarkdownBolt(result)
+        result = this.replaceMarkdownItalic(result)
+
+        result = this.replaceMarkdownMark(result)
+
+
+        return result
+    }
+
+
+    public isTypeCard = () => {
+        return this.templateFront.includes("{{type:")
     }
 
 
@@ -116,7 +258,9 @@ export default class CardContentController {
             result = this.templateBack
         }
         const replaceFieldMethods = [this.replaceBasicFields, this.replaceTypeFields]
-        const replaceMethods = [this.replaceImageTemplates]
+        const replaceMethods = [this.replaceImageTemplates,
+            this.replaceMarkdown
+        ]
 
         for (const replaceMethod of replaceFieldMethods) {
             result = replaceMethod(this.fieldContentPairs, result)
@@ -152,7 +296,7 @@ export default class CardContentController {
     }
 
     public calcFontSize = (): number => {
-        const maxFontSize = 45
+        const maxFontSize = 40
 
 
         const contentLength = this.backHidden ?
@@ -191,5 +335,6 @@ export default class CardContentController {
 
 
     }
+
 
 }

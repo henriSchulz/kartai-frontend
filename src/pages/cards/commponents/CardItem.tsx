@@ -31,6 +31,7 @@ interface CardItemProps {
         onPause(): void
         onContinue(): void
         onChangeCardType(): void
+        onPreview(): void
     }
 
 }
@@ -56,11 +57,12 @@ export default function ({card, controller, selected, actions, newCardController
                 setAsAnchorEl: controller.states.selectedEntitiesState.val.length === 0
             })
         } else if (event.target instanceof HTMLDivElement) {
-            controller.onToggleSelectViewEntity({
-                viewItem: card,
-                singleSelect: true,
-                setAsAnchorEl: true
-            })
+            actions.onPreview()
+            // controller.onToggleSelectViewEntity({
+            //     viewItem: card,
+            //     singleSelect: true,
+            //     setAsAnchorEl: true
+            // })
         }
     }
 

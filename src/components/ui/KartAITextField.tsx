@@ -21,6 +21,7 @@ interface KartAITextFieldProps {
     mr?: number
     autoFocus?: boolean
     type?: "text" | "password" | "email" | "number"
+    onBlur?: (e: any) => void
 }
 
 export default function KartAITextField(props: KartAITextFieldProps) {
@@ -52,6 +53,7 @@ export default function KartAITextField(props: KartAITextFieldProps) {
 
     return <TextField
         sx={getSx()}
+        onBlur={props.onBlur}
         disabled={props.disabled}
         variant={props.variant}
         autoFocus={props.autoFocus}

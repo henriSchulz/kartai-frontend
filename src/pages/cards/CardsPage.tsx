@@ -43,6 +43,8 @@ import GenerateCardsModal from "./features/generate-cards/GenerateCardsModal";
 import OpenaiApiService from "../../services/OpenaiApiService";
 import CardTypeUtils from "../../utils/CardTypeUtils";
 import FieldContent from "../../types/dbmodel/FieldContent";
+import CardPreviewController from "./features/card-preview/CardPreviewController";
+import CardPreviewModal from "./features/card-preview/CardPreviewModal";
 
 export default function () {
 
@@ -69,6 +71,7 @@ export default function () {
     const [uploadedFile, setUploadedFile] = useState<File | null>(null)
     const [generatedCards, setGeneratedCards] = useState<Card[]>([])
     const [generatedFieldContents, setGeneratedFieldContents] = useState<FieldContent[]>([])
+    const [currentTemplateState, setCurrentTemplateState] = useState<"front" | "back">("front")
 
 
     const [showDeleteCardModal, setShowDeleteCardModal] = useState(false)
@@ -80,6 +83,7 @@ export default function () {
     const [showMoveCardModal, setShowMoveCardModal] = useState(false)
     const [showChangeCardTypeModal, setShowChangeCardTypeModal] = useState(false)
     const [showGenerateCardsModal, setShowGenerateCardsModal] = useState(false)
+    const [showPreviewCardModal, setShowPreviewCardModal] = useState(false)
 
 
     const isModalOpen = showDeleteCardModal || showNewCardModal || showEditCardModal || showCardInformationModal || showPauseContinueCardModal || showResetCardModal || showMoveCardModal || showChangeCardTypeModal || showGenerateCardsModal
@@ -177,6 +181,13 @@ export default function () {
         }
     })
 
+    const previewCardController = new CardPreviewController({
+        snackbar, cardsController: controller, states: {
+            showState: {val: showPreviewCardModal, set: setShowPreviewCardModal},
+            currentTemplateState: {val: currentTemplateState, set: setCurrentTemplateState}
+        }
+    })
+
 
     React.useEffect(() => {
 
@@ -262,6 +273,7 @@ export default function () {
         {showMoveCardModal && <MoveCardModal controller={moveCardController}/>}
         {showChangeCardTypeModal && <ChangeCardTypeModal controller={changeCardTypeController}/>}
         {showGenerateCardsModal && <GenerateCardsModal controller={generateCardsController}/>}
+        {showPreviewCardModal && <CardPreviewModal controller={previewCardController}/>}
 
 
         <PageTransitionWrapper>
@@ -314,6 +326,9 @@ export default function () {
                                             onEdit() {
                                                 setTempSelectedCard(card)
                                                 editCardController.open()
+                                            },
+                                            onPreview() {
+                                                previewCardController.open(card)
                                             },
                                             onChangeCardType() {
                                                 changeCardTypeController.open(card)

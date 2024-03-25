@@ -5,9 +5,15 @@ import {StaticText} from "../../../../data/text/staticText";
 import KartAISelect from "../../../../components/ui/KartAISelect";
 import {useEffect, useMemo} from "react";
 import CardTypeUtils from "../../../../utils/CardTypeUtils";
-import {Divider} from "@mui/material";
+import {ButtonGroup, Divider} from "@mui/material";
 import FieldUtils from "../../../../utils/FieldUtils";
 import KartAITextField from "../../../../components/ui/KartAITextField";
+import KartAIButton from "../../../../components/ui/KartAIButton";
+import {FormatBold, FormatItalic, Functions, HighlightTwoTone} from "@mui/icons-material";
+import OutlinedIconButton from "../../../../components/OutlinedIconButton";
+import FormatInkHighlighter from "../../../../asserts/FormatInkHighlighter";
+import Function from "../../../../asserts/Function";
+import {insertFormatting, insertFormattingActiveTextArea} from "../../../../utils/general";
 
 interface NewCardModalProps {
     controller: NewCardController
@@ -19,6 +25,23 @@ export default function ({controller}: NewCardModalProps) {
 
     useEffect(() => {
         controller.setDefaultSelectedCardType()
+
+        const keyboardShortcuts = {
+            "i": () => insertFormattingActiveTextArea("*"),
+            "b": () => insertFormattingActiveTextArea("**"),
+            "h": () => insertFormattingActiveTextArea("`"),
+            "e": () => insertFormattingActiveTextArea("$"),
+        }
+
+        const handler = controller.getOnKeyboardShortcuts(keyboardShortcuts, false)
+
+        window.addEventListener("keydown", handler)
+
+        return () => {
+            window.removeEventListener("keydown", handler)
+        }
+
+
     }, [])
 
 
@@ -53,13 +76,29 @@ export default function ({controller}: NewCardModalProps) {
             />
             <Divider/>
 
-            <KartAIBox mt={2}>
+            <ButtonGroup sx={{mt: 2}} variant="outlined">
+                <KartAIButton onClick={() => insertFormatting("*")} variant="outlined">
+                    <FormatItalic/>
+                </KartAIButton>
+                <KartAIButton onClick={() => insertFormatting("**")} variant="outlined">
+                    <FormatBold/>
+                </KartAIButton>
+                <KartAIButton onClick={() => insertFormatting("`")} variant="outlined">
+                    <FormatInkHighlighter/>
+                </KartAIButton>
+                <KartAIButton onClick={() => insertFormatting("$")} variant="outlined">
+                    <Function/>
+                </KartAIButton>
+            </ButtonGroup>
+
+            <KartAIBox mt={1}>
                 {fields.map((field, index) =>
 
                     <KartAITextField mt={index === 0 ? 0 : 1} fullWidth
                                      label={field.name}
                                      size="medium"
                                      variant="outlined"
+                                     multiline
                                      id={field.id}
                                      key={field.id}
                     />
