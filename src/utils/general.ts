@@ -95,14 +95,8 @@ export function formatDuration(timestamp: number): string {
         }
     }
 
-    if (days === 0) {
-        if (minutes === 0) {
-            return `${hours}h`
-        } else return `${hours}h ${minutes}m`
-    }
 
-
-    return `${days}d ${hours}h ${minutes}m`;
+    return `${days !== 0 ? `${days}d` : ""} ${hours !== 0 ? `${hours}h` : ""}${minutes !== 0 ? `${minutes}m` : ""}`;
 }
 
 
@@ -192,7 +186,51 @@ export function getLastActiveTextArea(): HTMLTextAreaElement | null {
     return window.lastActiveTextArea;
 }
 
-export function insertFormatting(format: "**" | "*" | "$" | "`") {
+export function insertImage() {
+    const currentInput = getLastActiveTextArea()
+    if (!currentInput) return
+    const selectedText = window.lastTextSelection
+
+    const inputText = currentInput.value
+    const selectionStart = currentInput.selectionStart!
+    const selectionEnd = currentInput.selectionEnd!
+
+    let newText = ""
+    currentInput.focus()
+    if (selectedText) {
+        newText = inputText.substring(0, selectionStart) + "{{img:" + selectedText + "}}" + inputText.substring(selectionEnd)
+    } else {
+        newText = inputText.substring(0, selectionStart) + "{{img:}}" + inputText.substring(selectionEnd)
+        setTimeout(() => currentInput.setSelectionRange(selectionStart + 6, selectionStart + 6), 10)
+    }
+
+    currentInput.value = newText
+}
+
+export function insertHeader(type: number) {
+    if (type < 1 || type > 6) throw new Error("Header type must be between 1 and 6")
+
+    const currentInput = getLastActiveTextArea()
+    if (!currentInput) return
+    const selectedText = window.lastTextSelection
+
+    const inputText = currentInput.value
+    const selectionStart = currentInput.selectionStart!
+    const selectionEnd = currentInput.selectionEnd!
+
+    let newText = ""
+    currentInput.focus()
+    if (selectedText) {
+        newText = inputText.substring(0, selectionStart) + "" + "#".repeat(type) + " " + selectedText + inputText.substring(selectionEnd) + "\n"
+    } else {
+        newText = inputText.substring(0, selectionStart) + "" + "#".repeat(type) + " " + inputText.substring(selectionEnd) + "\n"
+        setTimeout(() => currentInput.setSelectionRange(selectionStart + type + 1, selectionStart + type + 1), 10)
+    }
+
+    currentInput.value = newText
+}
+
+export function insertFormatting(format: "**" | "*" | "$" | "`" | "image") {
 
     const currentInput = getLastActiveTextArea()
 
@@ -204,16 +242,22 @@ export function insertFormatting(format: "**" | "*" | "$" | "`") {
     const selectionEnd = currentInput.selectionEnd!
 
     let newText = ""
+
+
+    currentInput.focus()
     if (selectedText) {
+
         newText = inputText.substring(0, selectionStart) + format + selectedText + format + inputText.substring(selectionEnd)
     } else {
         newText = inputText.substring(0, selectionStart) + format + format + inputText.substring(selectionEnd)
+        //place cursor between the two formatting characters
+        setTimeout(() => currentInput.setSelectionRange(selectionStart + format.length, selectionStart + format.length), 10)
     }
 
     currentInput.value = newText
 }
 
-export function insertFormattingActiveTextArea(format: "**" | "*" | "$" | "`") {
+export function insertFormattingActiveTextArea(format: "**" | "*" | "$" | "`" | "image") {
 
     const currentInput = document.activeElement as HTMLTextAreaElement
 
@@ -227,10 +271,14 @@ export function insertFormattingActiveTextArea(format: "**" | "*" | "$" | "`") {
     const selectionEnd = currentInput.selectionEnd!
 
     let newText = ""
+    currentInput.focus()
     if (selectedText) {
         newText = inputText.substring(0, selectionStart) + format + selectedText + format + inputText.substring(selectionEnd)
     } else {
         newText = inputText.substring(0, selectionStart) + format + format + inputText.substring(selectionEnd)
+        //place cursor between the two formatting characters
+        setTimeout(() => currentInput.setSelectionRange(selectionStart + format.length, selectionStart + format.length), 10)
+
     }
 
     currentInput.value = newText

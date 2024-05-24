@@ -6,7 +6,7 @@ import AuthenticationController from "./AuthenticationController";
 import KartAIModal from "../../components/KartAIModal";
 import {StaticText} from "../../data/text/staticText";
 import KartAIButton from "../../components/ui/KartAIButton";
-import {Icons} from "../../asserts/asserts";
+import {Icons} from "../../assets/asserts";
 import KartAITextField from "../../components/ui/KartAITextField";
 import KartAIBox from "../../components/ui/KartAIBox";
 import {Settings} from "../../Settings";

@@ -1,46 +1,64 @@
-# Getting Started with Create React App
+# KartAI Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+KartAI ist eine intelligente Karteikarten-App, die das Lernen leichter macht. Mit KartAI kannst du effizienter lernen
+und mehr Wissen aufnehmen. Dank unseren effizienten Algorithmen kannst du deine Lernzeit minimieren. KartAI basiert auf
+spaced repetition, einer bewährten Lernstrategie, die Ihr Gedächtnis gezielt stärkt. KartAI kann benutzt werden um:
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- **Lernalgorithmen**: Unser Algorithmus identifiziert anhand der Vergessenskurve Inhalte, die sich an der Schwelle des
+  Vergessens befinden könnten, und präsentiert dir diese gezielt. So unterstützen wir dich dabei, wichtige Informationen
+  in deinem Gedächtnis zu bewahren und dem Vergessen zu entgehen.
+- **Individualität**: KartAI ermöglicht freie Anpassungen. Du kannst Karten nach Belieben bearbeiten und verschiedene
+  Kartentypen und Varianten erstellen.
+- **KI-Karten**: Durch die nahtlose Verknüpfung von KartAI mit den Services von OpenAI ermöglichen wir die Nutzung der
+  leistungsstarken künstlichen Intelligenz von KartAI zur Generierung von hochwertigen Inhalten und Lernmaterialien.
+- **KartAI-Cloud**: Die automatische Speicherung in der KartAI-Cloud gewährleistet, dass deine Karten stets
+  synchronisiert sind und auf all deinen Geräten in vollem Umfang verfügbar sind, unabhängig von Ort oder Zeitpunkt.
 
-### `npm start`
+## Installation
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Um die App zu installieren, führen Sie die folgenden Schritte aus:
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+0. Installieren Sie KartAI Backend
 
-### `npm test`
+1. Klonen Sie das Repository:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```git clone https://github.com/henriSchulz/kartai-frontend.git```
 
-### `npm run build`
+2. Wechseln Sie in das Verzeichnis des geklonten Repositorys:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```cd kartai-frontend```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+3. Installieren Sie die Abhängigkeiten:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```npm install```
 
-### `npm run eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+4. Fügen Sie ihre `src/config/firebaseConfig.ts` hinzu:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```typescript
+import {initializeApp} from "firebase/app";
+import {getAuth, GoogleAuthProvider} from "firebase/auth"
+const firebaseConfig = {
+    apiKey: "",
+    authDomain: "",
+    projectId: "",
+    storageBucket: "",
+    messagingSenderId: "",
+    appId: "",
+    measurementId: ""
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app)
+const provider = new GoogleAuthProvider()
+export {auth, provider}
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+5. Starten Sie die App:
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+```npm start```
 
-## Learn More
+## Lizenz
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+Dieses Projekt steht unter der MIT-Lizenz.

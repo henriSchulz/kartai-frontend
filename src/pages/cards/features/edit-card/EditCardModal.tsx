@@ -3,15 +3,18 @@ import KartAIBox from "../../../../components/ui/KartAIBox";
 import KartAIModal from "../../../../components/KartAIModal";
 import {StaticText} from "../../../../data/text/staticText";
 import KartAITextField from "../../../../components/ui/KartAITextField";
-import {useEffect, useMemo} from "react";
+import React, {useEffect, useMemo} from "react";
 import FieldContentPair from "../../../../types/FieldContentPair";
 import FieldContentUtils from "../../../../utils/FieldContentUtils";
 import {Breakpoint, ButtonGroup} from "@mui/material";
 import KartAIButton from "../../../../components/ui/KartAIButton";
-import {insertFormatting, insertFormattingActiveTextArea} from "../../../../utils/general";
-import {FormatBold, FormatItalic} from "@mui/icons-material";
-import FormatInkHighlighter from "../../../../asserts/FormatInkHighlighter";
-import Function from "../../../../asserts/Function";
+import {insertFormatting, insertFormattingActiveTextArea, insertHeader, insertImage} from "../../../../utils/general";
+import {FormatBold, FormatItalic, Image, Title} from "@mui/icons-material";
+import FormatInkHighlighter from "../../../../assets/FormatInkHighlighter";
+import Function from "../../../../assets/Function";
+import KartAISelect from "../../../../components/ui/KartAISelect";
+import KartAIPopperMenu from "../../../../components/KartAIPopperMenu";
+import FormatHeadline from "../../../../assets/FormatHeadline";
 
 interface EditCardModalProps {
     controller: EditCardController
@@ -19,7 +22,7 @@ interface EditCardModalProps {
 
 
 export default function ({controller}: EditCardModalProps) {
-
+    const [headlineMenuAnchorEl, setHeadlineMenuAnchorEl] = React.useState<null | HTMLElement>(null)
 
     useEffect(() => {
 
@@ -56,6 +59,12 @@ export default function ({controller}: EditCardModalProps) {
         return "xs" as Breakpoint
     }, [fieldContentPairs])
 
+    const headlineMenuItems = Array.from({length: 6}, (_, i) => i + 1).map(i => ({
+        icon: <FormatHeadline type={i}/>,
+        text: StaticText.HEADLINE + " " + i,
+        onClick: () => insertHeader(i)
+    }))
+
 
     return <KartAIBox>
         <KartAIModal
@@ -67,6 +76,19 @@ export default function ({controller}: EditCardModalProps) {
         >
 
             <ButtonGroup variant="outlined">
+                {/*<KartAIButton onClick={e => setHeadlineMenuAnchorEl(e.currentTarget)} variant="outlined">*/}
+                {/*    <Title/>*/}
+                {/*</KartAIButton>*/}
+
+                {/*<KartAIPopperMenu*/}
+
+                {/*    orientation="top"*/}
+                {/*    menuItems={headlineMenuItems}*/}
+                {/*    show={Boolean(headlineMenuAnchorEl)}*/}
+                {/*    onClose={() => setHeadlineMenuAnchorEl(null)}*/}
+                {/*    anchorEl={headlineMenuAnchorEl}*/}
+                {/*/>*/}
+
                 <KartAIButton onClick={() => insertFormatting("*")} variant="outlined">
                     <FormatItalic/>
                 </KartAIButton>
@@ -78,6 +100,9 @@ export default function ({controller}: EditCardModalProps) {
                 </KartAIButton>
                 <KartAIButton onClick={() => insertFormatting("$")} variant="outlined">
                     <Function/>
+                </KartAIButton>
+                <KartAIButton onClick={() => insertImage()} variant="outlined">
+                    <Image/>
                 </KartAIButton>
             </ButtonGroup>
 

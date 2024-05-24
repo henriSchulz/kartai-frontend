@@ -9,10 +9,10 @@ import {ButtonGroup, Divider} from "@mui/material";
 import FieldUtils from "../../../../utils/FieldUtils";
 import KartAITextField from "../../../../components/ui/KartAITextField";
 import KartAIButton from "../../../../components/ui/KartAIButton";
-import {FormatBold, FormatItalic, Functions, HighlightTwoTone} from "@mui/icons-material";
+import {FormatBold, FormatItalic, Functions, HighlightTwoTone, Image} from "@mui/icons-material";
 import OutlinedIconButton from "../../../../components/OutlinedIconButton";
-import FormatInkHighlighter from "../../../../asserts/FormatInkHighlighter";
-import Function from "../../../../asserts/Function";
+import FormatInkHighlighter from "../../../../assets/FormatInkHighlighter";
+import Function from "../../../../assets/Function";
 import {insertFormatting, insertFormattingActiveTextArea} from "../../../../utils/general";
 
 interface NewCardModalProps {
@@ -88,6 +88,9 @@ export default function ({controller}: NewCardModalProps) {
                 </KartAIButton>
                 <KartAIButton onClick={() => insertFormatting("$")} variant="outlined">
                     <Function/>
+                </KartAIButton>
+                <KartAIButton onClick={() => insertFormatting("image")} variant="outlined">
+                    <Image/>
                 </KartAIButton>
             </ButtonGroup>
 

@@ -72,6 +72,7 @@ export default function () {
     const [generatedCards, setGeneratedCards] = useState<Card[]>([])
     const [generatedFieldContents, setGeneratedFieldContents] = useState<FieldContent[]>([])
     const [currentTemplateState, setCurrentTemplateState] = useState<"front" | "back">("front")
+    const [cardGenerationInputTextFieldState, setCardGenerationInputTextFieldState] = useState<string>("")
 
 
     const [showDeleteCardModal, setShowDeleteCardModal] = useState(false)
@@ -177,7 +178,8 @@ export default function () {
             cardGenerationInputTextState: {val: cardGenerationInputText, set: setCardGenerationInputText},
             uploadedFileState: {val: uploadedFile, set: setUploadedFile},
             generatedCardsState: {val: generatedCards, set: setGeneratedCards},
-            generatedFieldContentsState: {val: generatedFieldContents, set: setGeneratedFieldContents}
+            generatedFieldContentsState: {val: generatedFieldContents, set: setGeneratedFieldContents},
+            inputTextFieldState: {val: cardGenerationInputTextFieldState, set: setCardGenerationInputTextFieldState}
         }
     })
 

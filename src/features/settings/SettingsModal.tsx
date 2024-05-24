@@ -161,6 +161,8 @@ export default function ({controller}: SettingsModalProps) {
                                   secondary={Settings.OPENAI_KEY === "" ?
                                       StaticText.PLEASE_SET_OPENAI_KEY : Settings.GPT_VERSION}/>
                 </ListItem>}
+
+
                 {AuthenticationService.current &&
 
                     <ListItem disablePadding>

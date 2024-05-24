@@ -23,3 +23,8 @@ yarn-debug.log*
 yarn-error.log*
 .env
 package-lock.json
+
+src/config/firebaseConfig.ts
+
+.firebaserc
+.firebase

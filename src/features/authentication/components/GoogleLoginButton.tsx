@@ -1,4 +1,4 @@
-import {Icons} from "../../../asserts/asserts";
+import {Icons} from "../../../assets/asserts";
 import {StaticText} from "../../../data/text/staticText";
 import KartAIButton from "../../../components/ui/KartAIButton";
 import React from "react";

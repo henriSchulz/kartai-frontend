@@ -7,6 +7,7 @@ import {StaticText} from "../../../../data/text/staticText";
 import FieldContent from "../../../../types/dbmodel/FieldContent";
 import {generateModelId, getTextFieldValue} from "../../../../utils/general";
 import FieldContentUtils from "../../../../utils/FieldContentUtils";
+import React from "react";
 
 interface EditCardControllerOptions extends ModalControllerOptions {
     card: Card | null
@@ -74,6 +75,7 @@ export default class EditCardController extends ModalController<EditCardControll
             }
         }
     }
+
 
 
 }

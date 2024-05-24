@@ -5,12 +5,13 @@ import {StaticText} from "../../../../data/text/staticText";
 import React, {useEffect, useMemo} from "react";
 import CardTypeUtils from "../../../../utils/CardTypeUtils";
 import KartAISelect from "../../../../components/ui/KartAISelect";
-import {Step, StepLabel, Stepper} from "@mui/material";
+import {Step, StepLabel, Stepper, Typography} from "@mui/material";
 import KartAIButton from "../../../../components/ui/KartAIButton";
 import {Add, AutoAwesome, CloudUpload, Description, Drafts, Forward, ForwardOutlined, Image} from "@mui/icons-material";
 import InvisibleFileSelector from "../../../../components/InvisibleFileSelector";
 import ListViewContent from "../../../../components/list-view/ListViewContent";
 import GeneratedCardItem from "./GeneratedCardItem";
+import KartAITextField from "../../../../components/ui/KartAITextField";
 
 interface GenerateCardsModalProps {
     controller: GenerateCardsController
@@ -57,7 +58,7 @@ export default function ({controller}: GenerateCardsModalProps) {
                      onClose={controller.close}
                      title={StaticText.GENERATE_CARDS}
                      hideButtons
-                     size={controller.states.activeGenerateCardsStepState.val === 0 ? "xs" : "md"}
+                     size={controller.states.activeGenerateCardsStepState.val === 0 ? "sm" : "md"}
         >
 
             <Stepper nonLinear activeStep={controller.states.activeGenerateCardsStepState.val}>
@@ -82,7 +83,7 @@ export default function ({controller}: GenerateCardsModalProps) {
                     <KartAIButton disabled={controller.states.loadingState.val} onClick={controller.onOpenFileSelector}
                                   startIcon={getIcon()}
                                   size="large"
-                                  mb={4}
+                                  mb={2}
                                   color="secondary"
                                   variant="outlined"
                                   fullWidth>
@@ -91,6 +92,19 @@ export default function ({controller}: GenerateCardsModalProps) {
                     <InvisibleFileSelector accept="image/*, text/plain, application/pdf"
                                            id="generate-cards-file-selector"
                                            onFileSelected={controller.onUploadFile}/>
+
+                    <KartAIBox mb={4} gridCenter>
+                        <Typography mb={2}>{StaticText.OR}</Typography>
+
+                        <KartAITextField
+                            value={controller.states.inputTextFieldState.val}
+                            onChange={controller.states.inputTextFieldState.set}
+                            variant="outlined"
+                            multiline={true}
+                            fullWidth
+                            minRows={5}
+                            label={StaticText.MATERIAL}/>
+                    </KartAIBox>
 
                     <KartAIButton loadingText={StaticText.LOADING}
                                   onClick={controller.onContinue}
@@ -113,12 +127,14 @@ export default function ({controller}: GenerateCardsModalProps) {
                 </KartAIBox>
 
                 <KartAIBox fullWidth flexCenter>
-                    <KartAIButton loading={controller.states.loadingState.val} startIcon={<AutoAwesome/>} mr={2} fullWidth variant="contained"
+                    <KartAIButton loading={controller.states.loadingState.val} startIcon={<AutoAwesome/>} mr={2}
+                                  fullWidth variant="contained"
                                   onClick={controller.onContinue}>
                         {StaticText.REGENERATE_CARDS}
                     </KartAIButton>
 
-                    <KartAIButton loading={controller.states.loadingState.val} startIcon={<Add/>} fullWidth variant="contained" onClick={controller.submit}>
+                    <KartAIButton loading={controller.states.loadingState.val} startIcon={<Add/>} fullWidth
+                                  variant="contained" onClick={controller.submit}>
                         {StaticText.ADD_CARDS}
                     </KartAIButton>
 

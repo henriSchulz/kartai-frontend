@@ -44,7 +44,7 @@ import {isXsWindow} from "../../utils/general";
 import TopProgressbar from "../../components/TopProgressbar";
 import ImportMarkdownTableController from "./features/import-markdown-table/ImportMarkdownTableController";
 import ImportCraftTableModal from "./features/import-markdown-table/ImportMarkdownTableModal";
-import {Icons} from "../../asserts/asserts";
+import {Icons} from "../../assets/asserts";
 import CardUtils from "../../utils/CardUtils";
 
 

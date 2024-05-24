@@ -1,4 +1,4 @@
-import {Icons} from "../asserts/asserts";
+import {Icons} from "../assets/asserts";
 
 interface Icon8Props {
     category: string

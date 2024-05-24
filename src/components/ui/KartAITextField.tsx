@@ -22,6 +22,7 @@ interface KartAITextFieldProps {
     autoFocus?: boolean
     type?: "text" | "password" | "email" | "number"
     onBlur?: (e: any) => void
+    minRows?: number
 }
 
 export default function KartAITextField(props: KartAITextFieldProps) {
@@ -59,6 +60,7 @@ export default function KartAITextField(props: KartAITextFieldProps) {
         autoFocus={props.autoFocus}
         defaultValue={props.defaultValue}
         type={props.type}
+        minRows={props.minRows}
         onChange={e => {
             if (props.onChange) {
                 props.onChange(e.target.value)

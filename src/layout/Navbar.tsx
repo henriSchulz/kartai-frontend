@@ -3,7 +3,7 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
-import {Inventory2, Menu as MenuIcon} from "@mui/icons-material"
+import {Feed, Inventory2, Login, Menu as MenuIcon} from "@mui/icons-material"
 import Menu from '@mui/material/Menu';
 import {Theme} from "@mui/material";
 import {useLocation, useNavigate} from "react-router-dom";
@@ -12,7 +12,7 @@ import {SxProps} from "@mui/system";
 import OutlinedIconButton from "../components/OutlinedIconButton";
 import KartAIBox from "../components/ui/KartAIBox";
 import {StaticText} from "../data/text/staticText";
-import {Icons} from "../asserts/asserts";
+import {Icons} from "../assets/asserts";
 import KartAIButton from "../components/ui/KartAIButton";
 import {useGlobalContext} from "../App";
 import {Settings as SettingsIcon} from "@mui/icons-material"
@@ -25,8 +25,7 @@ interface NavbarProps {
 
     sx?: SxProps<Theme>
 
-
-    onOpenSettings(): void
+    onClickSignIn(): void
 
     onOpenCardTypes(): void
 
@@ -45,6 +44,12 @@ export default function (props: NavbarProps) {
 
     const showKartAIWeb = (location.pathname === "/" ||
         (location.pathname.startsWith("/public-deck/") && !AuthenticationService.current)) && !Settings.IS_ELECTRON
+
+    const showLogin = location.pathname === "/" && !AuthenticationService.current
+
+    const showSettings = location.pathname !== "/"
+
+    const showNews = location.pathname === "/"
 
 
     return (
@@ -73,6 +78,15 @@ export default function (props: NavbarProps) {
                         </Typography>
 
                     </KartAIBox>
+
+                    {showNews && <KartAIBox ml={3}>
+                        <KartAIButton startIcon={<Feed/>} sx={{fontSize: 18, fontWeight: 600}} size="large"
+                                      onClick={() => window.open(Settings.NEWS_PAGE_LINK)}
+                                      variant="text">
+                            {StaticText.NEWS}
+                        </KartAIButton>
+                    </KartAIBox>}
+
                     <KartAIBox sx={{flexGrow: 1}}/>
                     <KartAIBox sx={{display: "flex"}}>
                         {
@@ -82,6 +96,13 @@ export default function (props: NavbarProps) {
                             </OutlinedIconButton>
                         }
 
+                        {showLogin &&
+                            <KartAIButton onClick={props.onClickSignIn} startIcon={<Login/>}
+                                          sx={{fontSize: 18, fontWeight: 600, mr: 2}} size="large"
+                                          variant="text">
+                                {StaticText.SIGN_IN}
+                            </KartAIButton>}
+
                         {showKartAIWeb &&
                             <KartAIButton disabled={!topLevelInitDone} onClick={() => navigate("/public-decks")}
                                           variant="outlined">
@@ -89,10 +110,10 @@ export default function (props: NavbarProps) {
                             </KartAIButton>}
 
 
-                        <OutlinedIconButton onClick={props.onOpenSettings} disabled={!topLevelInitDone}
-                                            sx={{mr: 2, ml: 2}}>
+                        {showSettings && <OutlinedIconButton onClick={props.onOpenSettings} disabled={!topLevelInitDone}
+                                                             sx={{mr: 2, ml: 2}}>
                             <SettingsIcon fontSize="medium"/>
-                        </OutlinedIconButton>
+                        </OutlinedIconButton>}
 
 
                     </KartAIBox>

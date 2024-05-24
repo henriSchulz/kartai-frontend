@@ -47,6 +47,7 @@ const GERMAN: StaticTextKeys = {
     CARD_GENERATION_FAILED: "Das Generieren der Karten ist fehlgeschlagen. Bitte Versuche es erneut",
     CARD_GENERATION_FAILED_STEP: "Das Generieren der Karten  ist nach {chars} Zeichen ist fehlgeschlagen. Setze generieren fort...",
     CARD_GENERATION_PROMPT: "Du erstellst Karteikarten des Kartentypen {cardType} im folgenden lesbaren JSON-Format: {eg}. Beziehe dich beim generieren immer auf das gegebene Material des Users. Achte besonders darauf, du nur das JSON zurück gibst, damit es richtig geparsed werden kann.",
+    GEMINI_CARD_GENERATION_PROMPT: "Kartentyp: {cardType}, Felder: {fields}, Material: {material}",
     CARD_MOVED: "Eine Karte verschoben zu {deck}",
     CARD_PAUSED: "Karte pausiert",
     CARD_RESET: "Karte zurückgesetzt",
@@ -275,7 +276,8 @@ const GERMAN: StaticTextKeys = {
     NEW_VARIANT: "Neue Variante",
     NEXT_LEARNING_CARD: "Die nächste zu lernende Karte wird in {duration} bereitgestellt.",
     NEXT_PAGE: "Nächste Seite",
-    NOT_ENOUGH_INPUT_TEXT: "Das hochgeladene Datei konnte nicht richtig gelesen werden oder enthält zu wenig Text",
+    NOT_ENOUGH_INPUT_TEXT_FILE: "Das hochgeladene Datei konnte nicht richtig gelesen werden oder enthält zu wenig Text",
+    NOT_ENOUGH_INPUT_TEXT: "Der eingegebene Text ist zu kurz. Bitte füge mehr Text hinzu.",
     NO_ACCOUNT: "Du hast noch kein Konto?",
     NO_API_CONNECTION: "Kein Verbindung zur API",
     NO_API_CONNECTION_TEXT: "Es tut uns leid, aber wir konnten keine Verbindung zur API herstellen. Bitte überprüfe deine Internetverbindung und versuche es erneut. Wenn das Problem weiterhin besteht, könnte die API vorübergehend nicht verfügbar sein.",
@@ -413,6 +415,11 @@ const GERMAN: StaticTextKeys = {
     DUE: "Fällig",
     DUE_IN: "Fällig in",
     DUE_NOW: "Jetzt fällig",
+    NEWS: "Neuigkeiten",
+    FAILED_TO_EXTRACT_TEXT: "Der Text konnte nicht extrahiert werden",
+    LEARNING_STATE_INFO: "Die Lernstufe ist ein Maß den Lernfortschritt einer Karte. Eine Lernstufe von 0 bedeutet, dass die Karte noch nicht gelernt wurde. Die Lernstufe steigt mit jeder erfolgreichen Wiederholung der Karte. Bei einer Lernstufe von 10 gilt die Karte als vollständig gelernt und sie ist im Langzeitgedächtnis gespeichert.",
+    CARD_TYPE_CARD_DELETE_CASCADE: "Möchtest du den Kartentyp löschen? Durch das Löschen des Kartentyps werden alle {num} Karten dieses Typs gelöscht",
+    HEADLINE: "Überschrift",
 }
 
 export default GERMAN

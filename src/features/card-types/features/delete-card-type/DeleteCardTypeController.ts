@@ -32,6 +32,11 @@ export default class DeleteCardTypeController extends ModalController<DeleteCard
     public close = () => {
         this.states.showState.set(false)
     }
+
+    public getAffectedCardCount = () => {
+        return CardUtils.getInstance().getAllBy("cardTypeId", this.cardTypesController.getTempSelectedCardType().id).length
+    }
+
     public submit = () => {
         const cardTypeId = this.cardTypesController.getTempSelectedCardType().id
         CardTypeUtils.getInstance().delete(cardTypeId)

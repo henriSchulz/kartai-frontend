@@ -24,7 +24,8 @@ export class Settings {
     public static OPENAI_KEY = localStorage.getItem(LocalStorageKeys.OPENAI_KEY) ?? ""
     public static GPT_VERSION = localStorage.getItem(LocalStorageKeys.GPT_VERSION) ?? "gpt-3.5-turbo"
     public static PRIVACY_POLICY_LINK = "https://www.craft.me/s/bTUA5b0lpyHVy5"
-    public static LEGAL_NOTICE_LINK = "about:blank"
+    public static NEWS_PAGE_LINK = "https://papers.craft.me/kartai-news"
+    public static LEGAL_NOTICE_LINK = "https://papers.craft.me/qsCDMBSV9TGREY"
     // @ts-ignore
     public static IS_ELECTRON = Boolean(window && window.process && window.process.type === "renderer")
 }

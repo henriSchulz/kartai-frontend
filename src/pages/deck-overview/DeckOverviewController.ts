@@ -11,6 +11,7 @@ import CardUtils from "../../utils/CardUtils";
 import {StaticText} from "../../data/text/staticText";
 import LoadingBackdropFunction from "../../types/LoadingBackdropFunction";
 import ImportExportUtils from "../../utils/ImportExportUtils";
+import DirectoryUtils from "../../utils/DirectoryUtils";
 
 
 interface DeckOverviewControllerOptions {
@@ -132,12 +133,16 @@ export default class DeckOverviewController extends ViewEntitySelectionControlle
                 ...deck,
                 isDirectory: false
             })
+
         }
 
 
         return items.filter(item => {
             const currentDirectory = this.states.currentDirectoryState.val
-            if (!item.parentId && !currentDirectory) return true
+            if(!currentDirectory) {
+                if (!item.parentId) return true
+                if(!DirectoryUtils.getInstance().has(item.parentId)) return true
+            }
             return currentDirectory?.id === item.parentId;
         })
     }

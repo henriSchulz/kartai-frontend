@@ -20,6 +20,8 @@ interface KartAIPopperMenuProps {
     onClose(): void
 
     menuItems: ItemMenuItem[]
+
+    orientation?: "top" | "bottom"
 }
 
 
@@ -28,7 +30,7 @@ export default function (props: KartAIPopperMenuProps) {
         open={props.show}
         anchorEl={props.anchorEl}
         role={undefined}
-        placement="bottom-start"
+        placement={props.orientation ? props.orientation === 'top' ? 'top-start' : 'bottom-start' : "bottom-start"}
         transition
         disablePortal
     >
@@ -37,18 +39,20 @@ export default function (props: KartAIPopperMenuProps) {
                 {...TransitionProps}
                 style={{
                     transformOrigin:
-                        placement === 'bottom-start' ? 'left top' : 'left bottom',
+                        props.orientation ?
+                            props.orientation === 'top' ? 'left top' : 'left bottom' :
+                            placement === 'bottom-start' ? 'left top' : 'left bottom',
                 }}
             >
-                <Paper>
+                <Paper sx={{zIndex: Infinity}}>
                     <ClickAwayListener onClickAway={props.onClose}>
                         <MenuList autoFocusItem={props.show}>
                             {props.menuItems.map((item, index) => {
                                 if (item.hidden) {
-                                    return <div key={index*Math.random()}></div>
+                                    return <div key={index * Math.random()}></div>
                                 }
 
-                                return <div key={index*Math.random()}>
+                                return <div key={index * Math.random()}>
                                     <MenuItem onClick={() => {
                                         item.onClick()
                                         props.onClose()

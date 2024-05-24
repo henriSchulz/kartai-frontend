@@ -204,6 +204,7 @@ function App() {
 
 
                 <Navbar
+                    onClickSignIn={authenticationController.open}
                     onOpenSettings={settingsController.open}
                     onOpenCardTypes={cardTypesController.open}
                     appController={appController}

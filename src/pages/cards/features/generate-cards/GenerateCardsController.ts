@@ -12,6 +12,8 @@ import CardUtils from "../../../../utils/CardUtils";
 import FieldContentUtils from "../../../../utils/FieldContentUtils";
 import React from "react";
 import {Settings} from "../../../../Settings";
+import GeminiApiService from "../../../../services/GeminiApiService";
+import {getTextFieldValue} from "../../../../utils/general";
 
 interface GenerateCardsControllerOptions extends ModalControllerOptions {
     cardsController: CardsController
@@ -24,7 +26,7 @@ interface GenerateCardsControllerOptions extends ModalControllerOptions {
         uploadedFileState: State<File | null>
         generatedCardsState: State<Card[]>
         generatedFieldContentsState: State<FieldContent[]>
-
+        inputTextFieldState: State<string>
     }
 }
 
@@ -43,6 +45,7 @@ export default class GenerateCardsController extends ModalController<GenerateCar
         this.setDefaultSelectedCardType()
         this.states.activeGenerateCardsStepState.set(0)
         this.states.cardGenerationInputTextState.set("")
+        this.states.inputTextFieldState.set("")
         this.states.uploadedFileState.set(null)
         this.states.generatedCardsState.set([])
         this.states.generatedFieldContentsState.set([])
@@ -95,37 +98,51 @@ export default class GenerateCardsController extends ModalController<GenerateCar
 
     onUploadFile = (files: File[]) => {
         const file = files[0]
-        if (file.size > 10 * 1024 * 1024) {
+        if (file.size > 500 * 1024 * 1024) {
             return this.snackbar(StaticText.FILE_TOO_BIG
                     .replaceAll("{name}", file.name)
-                    .replaceAll("{size}", "10")
+                    .replaceAll("{size}", "500")
                 , 4000, "error")
         }
         this.states.uploadedFileState.set(file)
     }
 
-    onGenerateCards = async (file: File, fileType: "img" | "pdf" | "text") => {
+    onGenerateCards = async (file?: File, fileType?: "img" | "pdf" | "text") => {
         this.states.loadingState.set(true)
 
         let text = null
 
-        switch (fileType) {
-            case "img":
-                text = await FileUtils.imageToText(file)
-                break
-            case "pdf":
-                text = await FileUtils.pdfToText(file)
-                break
-            case "text":
-                text = await file.text()
-                break
-        }
+        if (file) {
+            switch (fileType) {
+                case "img":
+                    text = await FileUtils.imageToText(file)
+                    break
+                case "pdf":
+                    text = await FileUtils.pdfToText(file)
+                    break
+                case "text":
+                    text = await file.text()
+                    break
+            }
+            if (!text) {
+                this.states.loadingState.set(false)
+                return this.snackbar(StaticText.FAILED_TO_EXTRACT_TEXT, 6000, "error")
+            }
+            if (text.length < 100) {
+                this.states.loadingState.set(false)
+                return this.snackbar(StaticText.NOT_ENOUGH_INPUT_TEXT_FILE, 6000, "error")
+            }
 
-        if (text === null) throw new Error("Unsupported file type")
+        } else {
+            const pasteFieldText = this.states.inputTextFieldState.val
 
-        if (text.length < 100) {
-            this.states.loadingState.set(false)
-            return this.snackbar(StaticText.NOT_ENOUGH_INPUT_TEXT, 6000, "error")
+
+            if (pasteFieldText?.replaceAll(" ", "").length < 100) {
+                this.states.loadingState.set(false)
+                return this.snackbar(StaticText.NOT_ENOUGH_INPUT_TEXT, 6000, "error")
+            }
+
+            text = pasteFieldText
         }
 
 
@@ -147,7 +164,12 @@ export default class GenerateCardsController extends ModalController<GenerateCar
     }
 
     onContinue = async () => {
-        if (!this.states.uploadedFileState.val) return this.snackbar(StaticText.NO_FILE_UPLOADED, 4000, "error")
+        if (!this.states.uploadedFileState.val) {
+            await this.onGenerateCards()
+            return
+        }
+
+        //return this.snackbar(StaticText.NO_FILE_UPLOADED, 4000, "error")
 
         const fileType = this.getFileType(this.states.uploadedFileState.val)
 

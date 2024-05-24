@@ -379,9 +379,12 @@ export interface StaticTextKeys {
     EVALUATE_CARDS: string
     UPLOAD_FILE: string
     CARD_GENERATION_PROMPT: string //{cardType}, {eg}
+    GEMINI_CARD_GENERATION_PROMPT: string //{cardType}, {fields}, {material}
     NO_FILE_UPLOADED: string
     FAILED_TO_GENERATE_CARDS: string
+    NOT_ENOUGH_INPUT_TEXT_FILE: string
     NOT_ENOUGH_INPUT_TEXT: string
+    FAILED_TO_EXTRACT_TEXT: string
     REGENERATE_CARDS: string
     ADD_CARDS: string
     CARDS_ADDED: string //{cards}
@@ -412,4 +415,8 @@ export interface StaticTextKeys {
     DUE: string
     DUE_IN: string
     DUE_NOW: string
+    NEWS: string
+    LEARNING_STATE_INFO: string
+    CARD_TYPE_CARD_DELETE_CASCADE: string
+    HEADLINE: string
 }

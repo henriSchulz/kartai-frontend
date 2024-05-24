@@ -2,7 +2,7 @@ import {Container, Divider, LinearProgress, List, ListItem, Stack, Typography} f
 import KartAIButton from "../../components/ui/KartAIButton";
 import {StaticText} from "../../data/text/staticText";
 import {AutoAwesome, Cloud, Devices, Download, Psychology, School, Tune} from "@mui/icons-material";
-import {Icons} from '../../asserts/asserts';
+import {Icons} from '../../assets/asserts';
 import {useGlobalContext} from "../../App";
 import KartAIBox from "../../components/ui/KartAIBox";
 import PageTransitionWrapper from "../../components/animation/PageTransitionWrapper";

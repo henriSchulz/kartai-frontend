@@ -2,8 +2,8 @@ import KartAIBox from "../../../../components/ui/KartAIBox";
 import DeckOrDirectoryInformationController from "./DeckOrDirectoryInformationController";
 import KartAIModal from "../../../../components/KartAIModal";
 import {StaticText} from "../../../../data/text/staticText";
-import {List, ListItem, ListItemIcon, ListItemText} from "@mui/material";
-import {Badge, Calculate, Folder, Functions} from "@mui/icons-material";
+import {List, ListItem, ListItemIcon, ListItemText, Tooltip, Typography} from "@mui/material";
+import {Badge, Calculate, Folder, Functions, Info} from "@mui/icons-material";
 import CardUtils from "../../../../utils/CardUtils";
 import DirectoryUtils from "../../../../utils/DirectoryUtils";
 import DeckUtils from "../../../../utils/DeckUtils";
@@ -65,7 +65,12 @@ export default function ({controller}: DeckOrDirectoryInformationModalProps) {
                     </ListItemIcon>
                     <ListItemText primaryTypographyProps={{fontSize: '20px', fontWeight: 550}}
                                   secondaryTypographyProps={{fontSize: '17px'}}
-                                  primary={StaticText.AVERAGE_LEARNING_LEVEL}
+                                  primary={<KartAIBox spacing={1} sx={{display: "flex", alignItems: "center"}}>
+                                      {StaticText.AVERAGE_LEARNING_LEVEL}
+                                      <Tooltip title={<Typography sx={{fontSize: 14}}>{StaticText.LEARNING_STATE_INFO}</Typography>}>
+                                          <Info fontSize="small"/>
+                                      </Tooltip>
+                                  </KartAIBox>}
                                   secondary={averageLearningState}/>
                 </ListItem>}
 

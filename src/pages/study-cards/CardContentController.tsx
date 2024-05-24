@@ -1,7 +1,7 @@
 import FieldContentPair from "../../types/FieldContentPair";
 import {getWindowWidth} from "../../utils/general";
 import {StaticText} from "../../data/text/staticText";
-import {Svg} from "../../asserts/asserts";
+import {Svg} from "../../assets/asserts";
 import {renderToStaticMarkup, renderToString} from "react-dom/server";
 import katex from "katex";
 import Latex from "react-latex";

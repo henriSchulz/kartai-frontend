@@ -2,8 +2,8 @@ import CardInformationController from "./CardInformationController";
 import KartAIBox from "../../../../components/ui/KartAIBox";
 import KartAIModal from "../../../../components/KartAIModal";
 import {StaticText} from "../../../../data/text/staticText";
-import {Divider, List, ListItem, ListItemIcon, ListItemText} from "@mui/material";
-import {Badge, ChevronRight, Functions, Psychology, Schedule} from "@mui/icons-material";
+import {Divider, List, ListItem, ListItemIcon, ListItemText, Tooltip, Typography} from "@mui/material";
+import {Badge, ChevronRight, Functions, Info, Psychology, Schedule} from "@mui/icons-material";
 import {useMemo} from "react";
 import DeckUtils from "../../../../utils/DeckUtils";
 import CardTypeUtils from "../../../../utils/CardTypeUtils";
@@ -85,7 +85,12 @@ export default function ({controller}: CardInformationModalProps) {
                     </ListItemIcon>
                     <ListItemText primaryTypographyProps={{fontSize: '20px', fontWeight: 550}}
                                   secondaryTypographyProps={{fontSize: '17px'}}
-                                  primary={StaticText.LEARNING_LEVEL}
+                                  primary={<KartAIBox spacing={1} sx={{display: "flex", alignItems: "center"}}>
+                                      {StaticText.LEARNING_LEVEL}
+                                      <Tooltip title={<Typography sx={{fontSize: 14}}>{StaticText.LEARNING_STATE_INFO}</Typography>}>
+                                          <Info fontSize="small"/>
+                                      </Tooltip>
+                                  </KartAIBox>}
                                   secondary={controller.cardsController.states.tempSelectedCardState.val?.learningState}/>
                 </ListItem>
                 <Divider/>

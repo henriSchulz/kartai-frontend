@@ -1,4 +1,5 @@
 import {createTheme} from "@mui/material";
+
 export const theme = createTheme({
     typography: {
         h4: {
@@ -111,6 +112,14 @@ export const theme = createTheme({
                     overflowY: "hidden"
                 }
             }
+        },
+        MuiTextField: {
+            styleOverrides: {
+                root: {
+                    // outline: "none",
+                }
+            }
         }
-    }
+    },
+
 })
